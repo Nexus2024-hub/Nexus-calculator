@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Quote Calculator — Powder Coating (Light)</title>
+<!-- PRICING: loaded from Admin Pricing tool via localStorage key nexus_pricing_v1 -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:   #F0F4F8;
+    --navy2:  #FFFFFF;
+    --navy3:  #EDF1F5;
+    --blue:   #E0EAF4;
+    --accent: #1F6BB0;
+    --bright: #1A5A9A;
+    --gold:   #9A7520;
+    --green:  #1A9930;
+    --red:    #C84030;
+    --white:  #1A2535;
+    --lgray:  #2E3D52;
+    --gray:   #5A6A80;
+    --border: rgba(0,0,0,0.09);
+    --bblue:  rgba(31,107,176,0.18);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--navy3);color:var(--white);font-family:'Open Sans',sans-serif;min-height:100vh;}
+
+  /* ── HEADER ── */
+  header{background:#FFFFFF;border-bottom:1px solid var(--border);padding:0 40px;height:64px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+  .logo{width:38px;height:38px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-weight:900;font-size:17px;color:#fff;clip-path:polygon(0 0,82% 0,100% 18%,100% 100%,18% 100%,0 82%);flex-shrink:0;}
+  .htext{display:flex;flex-direction:column;line-height:1.1;}
+  .htitle{font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;letter-spacing:1.5px;text-transform:uppercase;}
+  .hsub{font-size:10px;letter-spacing:2px;color:var(--accent);font-weight:700;text-transform:uppercase;margin-top:1px;}
+  .hcontact{margin-left:auto;font-size:11px;color:var(--gray);text-align:right;line-height:1.6;}
+  .hcontact a{color:var(--bright);text-decoration:none;}
+  .admin-link{margin-left:auto;display:flex;align-items:center;gap:16px;}
+  .admin-link a{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(200,168,75,0.3);padding:6px 14px;background:rgba(200,168,75,0.08);transition:all .2s;}
+  .admin-link a:hover{background:rgba(200,168,75,0.15);border-color:var(--gold);}
+  .pricing-badge{font-size:9px;color:var(--gray);letter-spacing:1px;}
+
+  /* ── MODE SWITCHER ── */
+  .mode-bar{background:#FFFFFF;border-bottom:1px solid var(--border);display:flex;padding:0 40px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+  .mode-tab{padding:14px 28px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;color:var(--gray);border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px;display:flex;align-items:center;gap:8px;}
+  .mode-tab.active{color:var(--bright);border-bottom-color:var(--accent);}
+  .mode-tab:hover{color:var(--lgray);}
+  .mode-tab .tab-badge{background:var(--accent);color:#fff;font-size:9px;padding:2px 6px;border-radius:2px;letter-spacing:1px;}
+
+  /* ── PAGE ── */
+  .page{max-width:1300px;margin:0 auto;padding:40px 40px 80px;display:grid;grid-template-columns:1fr 400px;gap:28px;align-items:start;}
+  .left{display:flex;flex-direction:column;gap:20px;}
+
+  /* ── PANEL ── */
+  .panel{background:var(--navy2);border:1px solid var(--border);}
+  .ph{padding:16px 24px;background:var(--blue);border-bottom:1px solid var(--bblue);display:flex;align-items:center;gap:12px;}
+  .ph-icon{width:30px;height:30px;background:rgba(46,125,197,.2);border:1px solid var(--bblue);display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .ph-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;}
+  .ph-sub{font-size:10px;color:var(--gray);margin-top:1px;}
+  .pb{padding:24px;}
+
+  /* ── FIELDS ── */
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--lgray);text-transform:uppercase;}
+  .iw{position:relative;display:flex;align-items:center;}
+  .ipfx{position:absolute;left:12px;font-size:13px;color:var(--accent);font-weight:700;pointer-events:none;z-index:1;}
+  .isfx{position:absolute;right:12px;font-size:10px;color:var(--gray);font-weight:700;pointer-events:none;letter-spacing:.5px;}
+  input[type=number],input[type=text],select,textarea{width:100%;background:#FFFFFF;border:1px solid rgba(0,0,0,0.12);color:var(--white);font-family:'Open Sans',sans-serif;font-size:13px;font-weight:500;padding:10px 14px;outline:none;transition:border-color .2s,background .2s;-moz-appearance:textfield;appearance:textfield;}
+  input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);background:#F5F8FB;box-shadow:0 0 0 3px rgba(31,107,176,.1);}
+  .has-pfx input{padding-left:28px;}
+  .has-sfx input{padding-right:42px;}
+  select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234A9FE0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+  select option{background:#FFFFFF;color:var(--white);}
+  .section-sep{font-size:9px;font-weight:700;letter-spacing:2.5px;color:var(--accent);text-transform:uppercase;margin:16px 0 12px;display:flex;align-items:center;gap:8px;}
+  .section-sep::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  /* ── STYLE CARDS ── */
+  .style-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:4px;}
+  .scard{border:1px solid var(--border);padding:14px 12px;cursor:pointer;transition:all .2s;background:#FFFFFF;position:relative;}
+  .scard:hover{border-color:rgba(31,107,176,0.3);background:#F0F6FF;}
+  .scard.sel{border-color:var(--accent);background:#EBF3FC;}
+  .scard.sel::after{content:'✓';position:absolute;top:7px;right:8px;width:16px;height:16px;background:var(--accent);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+  .scard-vis{height:40px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;border:1px solid var(--border);background:#F5F8FB;}
+  .scard-name{font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:2px;line-height:1.3;}
+  .scard.sel .scard-name{color:var(--bright);}
+  .scard-rate{font-size:10px;color:var(--gray);}
+  .dots{display:flex;gap:2px;margin-top:5px;}
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--border);border:1px solid rgba(255,255,255,.08);}
+  .dot.on{background:var(--accent);border-color:var(--accent);}
+
+  /* ── ITEM CATALOG ── */
+  .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .cat-card{border:1px solid var(--border);padding:14px;cursor:pointer;transition:all .2s;background:#FFFFFF;position:relative;}
+  .cat-card:hover{border-color:rgba(31,107,176,0.3);background:#F0F6FF;}
+  .cat-card.sel{border-color:var(--accent);background:#EBF3FC;}
+  .cat-card.sel::after{content:'✓';position:absolute;top:7px;right:8px;width:16px;height:16px;background:var(--accent);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+  .cat-icon{font-size:22px;margin-bottom:8px;}
+  .cat-name{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:.3px;margin-bottom:3px;}
+  .cat-card.sel .cat-name{color:var(--bright);}
+  .cat-desc{font-size:10px;color:var(--gray);line-height:1.5;}
+  .cat-hint{font-size:9px;color:var(--accent);margin-top:5px;font-weight:600;letter-spacing:.5px;}
+
+  /* ── ITEM LINES ── */
+  .items-table{width:100%;}
+  .item-row-header{display:grid;grid-template-columns:180px 80px 90px 100px 90px 32px;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:8px;}
+  .item-row-header span{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gray);text-transform:uppercase;}
+  .item-row{display:grid;grid-template-columns:180px 80px 90px 100px 90px 32px;gap:8px;align-items:center;margin-bottom:8px;}
+  .item-row input,
+  .item-row select{font-size:12px;padding:8px 10px;}
+  .item-row .has-pfx input{padding-left:22px;}
+  .item-row .ipfx{left:9px;font-size:11px;}
+  .item-row .has-sfx input{padding-right:32px;}
+  .item-row .isfx{right:8px;font-size:9px;}
+  .item-line-total{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--lgray);text-align:right;padding-right:4px;}
+  .remove-btn{width:28px;height:28px;background:rgba(224,90,74,.1);border:1px solid rgba(224,90,74,.2);color:#E05A4A;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;border-radius:2px;flex-shrink:0;line-height:1;}
+  .remove-btn:hover{background:rgba(224,90,74,.2);}
+  .add-item-btn{background:none;border:1px dashed rgba(31,107,176,0.25);color:var(--accent);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:9px;cursor:pointer;transition:all .2s;font-family:'Open Sans',sans-serif;width:100%;margin-top:8px;}
+  .add-item-btn:hover{background:#EBF3FC;border-color:var(--accent);}
+
+  /* ── AI ESTIMATOR ── */
+  .ai-estimator{background:linear-gradient(135deg,#EBF3FC,#F5F8FB);border:1px solid rgba(31,107,176,0.18);padding:24px;}
+  .ai-est-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+  .ai-badge{background:var(--accent);color:#fff;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;padding:4px 10px;text-transform:uppercase;}
+  .ai-est-title{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;}
+  .ai-est-sub{font-size:11px;color:var(--gray);margin-top:1px;}
+  .drop-zone{border:2px dashed rgba(31,107,176,0.25);padding:32px 20px;text-align:center;cursor:pointer;transition:all .3s;background:#FAFBFC;position:relative;}
+  .drop-zone:hover,.drop-zone.drag{border-color:var(--accent);background:#EBF3FC;}
+  .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .drop-icon{font-size:36px;margin-bottom:10px;opacity:.5;}
+  .drop-title{font-size:13px;font-weight:600;color:var(--lgray);margin-bottom:4px;}
+  .drop-sub{font-size:11px;color:var(--gray);}
+  .drop-hint{font-size:10px;color:var(--accent);margin-top:8px;font-weight:600;letter-spacing:.5px;}
+  .img-preview-wrap{position:relative;margin-bottom:16px;}
+  .img-preview{width:100%;max-height:220px;object-fit:cover;display:block;border:1px solid var(--bblue);}
+  .img-change{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.9);border:1px solid rgba(31,107,176,0.25);color:var(--accent);font-size:10px;font-weight:700;letter-spacing:1px;padding:5px 10px;cursor:pointer;text-transform:uppercase;transition:all .2s;}
+  .img-change:hover{background:#FFFFFF;}
+  .ai-describe{width:100%;background:#FFFFFF;border:1px solid rgba(0,0,0,0.12);color:var(--white);font-family:'Open Sans',sans-serif;font-size:12px;padding:10px 14px;outline:none;resize:vertical;min-height:70px;margin-top:12px;transition:border-color .2s;}
+  .ai-describe:focus{border-color:var(--accent);background:#F5F8FB;}
+  .ai-run-btn{width:100%;margin-top:12px;background:var(--accent);color:#fff;border:none;padding:13px;font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .ai-run-btn:hover:not(:disabled){background:var(--bright);transform:translateY(-1px);box-shadow:0 6px 20px rgba(46,125,197,.3);}
+  .ai-run-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .ai-result-box{background:#EBF3FC;border:1px solid rgba(31,107,176,0.18);padding:16px;margin-top:14px;animation:fadeUp .4s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .ai-result-label{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+  .ai-result-sqft{font-family:'Montserrat',sans-serif;font-size:36px;font-weight:900;color:var(--accent);line-height:1;}
+  .ai-result-sqft span{font-size:14px;color:var(--accent);font-weight:700;margin-left:4px;}
+  .ai-result-range{font-size:11px;color:var(--gray);margin-top:4px;}
+  .ai-result-notes{font-size:12px;color:var(--lgray);line-height:1.7;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+  .ai-apply-btn{width:100%;margin-top:12px;background:transparent;border:1px solid rgba(31,107,176,0.25);color:var(--accent);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:11px;cursor:pointer;transition:all .2s;}
+  .ai-apply-btn:hover{background:#EBF3FC;border-color:var(--accent);}
+  .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── RIGHT QUOTE PANEL ── */
+  .qpanel{background:#FFFFFF;border:1px solid rgba(31,107,176,0.18);position:sticky;top:88px;box-shadow:0 4px 16px rgba(0,0,0,0.08);}
+  .qph{background:var(--accent);padding:18px 24px;}
+  .qph-label{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:3px;}
+  .qph-title{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:800;letter-spacing:.5px;}
+  .qbody{padding:24px;}
+  .qlabel{font-size:9px;font-weight:700;letter-spacing:2.5px;color:var(--gray);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .qrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
+  .qrow:last-child{border-bottom:none;}
+  .qrow-l{font-size:12px;color:var(--gray);}
+  .qrow-v{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--lgray);}
+  .qrow.hl .qrow-l{color:var(--lgray);font-weight:600;}
+  .qrow.hl .qrow-v{color:var(--bright);}
+  .qtotal{background:#EBF3FC;border:1px solid rgba(31,107,176,0.18);padding:18px 20px;display:flex;justify-content:space-between;align-items:center;margin:16px 0;}
+  .qtotal-l{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:2px;}
+  .qtotal-sl{font-size:9px;color:rgba(138,150,168,.5);letter-spacing:.5px;}
+  .qtotal-amt{font-family:'Montserrat',sans-serif;font-size:42px;font-weight:900;color:var(--accent);line-height:1;}
+  .qtotal-amt sup{font-size:18px;vertical-align:top;margin-top:8px;display:inline-block;color:var(--accent);}
+  .margin-wrap{margin-bottom:16px;}
+  .mrow{display:flex;justify-content:space-between;margin-bottom:5px;}
+  .mlabel{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gray);text-transform:uppercase;}
+  .mpct{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;}
+  .mbar{height:5px;background:rgba(0,0,0,0.07);border-radius:3px;overflow:hidden;}
+  .mfill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:3px;transition:width .5s ease;}
+  .qdivider{height:1px;background:var(--border);margin:14px 0;}
+  .btn{display:block;width:100%;padding:13px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:none;cursor:pointer;transition:all .2s;text-align:center;margin-bottom:8px;}
+  .btn-p{background:var(--accent);color:#fff;}
+  .btn-p:hover{background:var(--bright);transform:translateY(-1px);box-shadow:0 6px 18px rgba(46,125,197,.3);}
+  .btn-s{background:transparent;border:1px solid rgba(31,107,176,0.25);color:var(--accent);}
+  .btn-s:hover{background:#EBF3FC;border-color:var(--accent);}
+  .btn-g{background:transparent;border:1px solid rgba(0,0,0,0.1);color:var(--gray);font-size:10px;}
+  .btn-g:hover{border-color:rgba(31,107,176,0.3);color:var(--lgray);}
+
+  /* ── TABS (inner) ── */
+  .itabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;}
+  .itab{padding:10px 16px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--gray);border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px;}
+  .itab.active{color:var(--bright);border-bottom-color:var(--accent);}
+  .itab:hover{color:var(--lgray);}
+  .itab-content{display:none;}
+  .itab-content.active{display:block;}
+
+  /* ── ITEMS BREAKDOWN ── */
+  .breakdown-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;}
+  .breakdown-item:last-child{border-bottom:none;}
+  .bi-name{color:var(--gray);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .bi-val{font-family:'Montserrat',sans-serif;font-weight:600;color:var(--lgray);}
+
+  /* ── COST INPUT ── */
+  .cost-input-row{display:flex;align-items:center;gap:8px;margin-top:8px;}
+  .cost-input-row span{font-size:11px;color:var(--gray);white-space:nowrap;}
+  .cost-mini-input{background:transparent;border:none;border-bottom:1px solid rgba(31,107,176,0.25);color:var(--lgray);font-size:12px;font-weight:600;width:80px;outline:none;font-family:'Open Sans',sans-serif;padding:2px 0;text-align:right;}
+
+  /* ── TOAST ── */
+  .toast{position:fixed;bottom:28px;right:28px;background:var(--green);color:#fff;padding:12px 22px;font-size:12px;font-weight:600;border-radius:2px;transform:translateY(70px);opacity:0;transition:all .3s;z-index:999;pointer-events:none;letter-spacing:.5px;}
+  .toast.show{transform:translateY(0);opacity:1;}
+
+  /* ── MASK/PLUG WIDGET ── */
+  .mp-widget{border:1px solid var(--border);background:#FAFBFC;}
+  .mp-type-row{display:flex;border-bottom:1px solid var(--border);}
+  .mp-type-btn{flex:1;padding:8px 6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;color:var(--gray);background:none;border:none;transition:all .2s;font-family:'Open Sans',sans-serif;border-right:1px solid var(--border);}
+  .mp-type-btn:last-child{border-right:none;}
+  .mp-type-btn.active{color:var(--accent);background:#EBF3FC;}
+  .mp-type-btn:hover:not(.active){color:var(--lgray);background:rgba(0,0,0,0.03);}
+  .mp-body{padding:12px 14px;display:none;}
+  .mp-body.active{display:block;}
+  .mp-rows{display:flex;flex-direction:column;gap:8px;}
+  .mp-row{display:grid;grid-template-columns:1fr 56px 62px 56px 70px;gap:6px;align-items:center;}
+  .mp-row input[type=number]{font-size:12px;padding:7px 8px;text-align:center;}
+  .mp-row .iw.has-pfx input{padding-left:22px;font-size:12px;padding-top:7px;padding-bottom:7px;}
+  .mp-row .ipfx{left:8px;font-size:11px;}
+  .mp-row-total{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--lgray);text-align:right;}
+  .mp-header{display:grid;grid-template-columns:1fr 56px 62px 56px 70px;gap:6px;padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid var(--border);}
+  .mp-header span{font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--gray);text-transform:uppercase;}
+  .mp-add-btn{background:none;border:none;color:var(--accent);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:8px 0 0;font-family:'Open Sans',sans-serif;display:flex;align-items:center;gap:4px;}
+  .mp-add-btn:hover{color:var(--bright);}
+  .mp-none{font-size:11px;color:var(--gray);padding:4px 0;}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:1100px){.page{grid-template-columns:1fr;}.qpanel{position:static;}}
+  @media(max-width:720px){.mode-bar{padding:0 20px;}.page{padding:20px 16px 60px;}.style-grid{grid-template-columns:repeat(2,1fr);}.cat-grid{grid-template-columns:repeat(2,1fr);}.field-row{grid-template-columns:1fr;}.hcontact{display:none;}}
+  @media(max-width:540px){.item-row{grid-template-columns:1fr 70px 80px 32px;}.item-row-header{grid-template-columns:1fr 70px 80px 32px;}.item-row .iw:nth-child(3),.item-row-header span:nth-child(3){display:none;}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">N</div>
+  <div class="htext">
+    <div class="htitle">Nexus Powder Coating</div>
+    <div class="hsub">Quote Calculator</div>
+  </div>
+  <div class="admin-link">
+    <span class="pricing-badge" id="pricing-source-badge">Prices: defaults</span>
+    <a href="nexus-admin-pricing.html">🔒 Admin Pricing</a>
+  </div>
+</header>
+
+<!-- MODE SWITCHER -->
+<div class="mode-bar">
+  <div class="mode-tab active" onclick="switchMode('handrail',this)" id="tab-handrail">
+    🔩 Handrail / Linear Foot
+  </div>
+  <div class="mode-tab" onclick="switchMode('auto',this)" id="tab-auto">
+    🚗 Automotive Items
+    <span class="tab-badge">NEW</span>
+  </div>
+  <div class="mode-tab" onclick="switchMode('surface',this)" id="tab-surface">
+    📐 Surface Area Items
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     PAGE: HANDRAIL
+     ════════════════════════════════════════════════ -->
+<div id="mode-handrail">
+<div class="page">
+  <div class="left">
+
+    <!-- CUSTOMER -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">👤</div><div><div class="ph-title">Customer & Project</div><div class="ph-sub">Optional — for quote document</div></div></div>
+      <div class="pb">
+        <div class="field-row">
+          <div class="field"><label>Customer / Company</label><input type="text" id="h-customer" placeholder="e.g. Acme Construction" oninput="calcHR()"></div>
+          <div class="field"><label>Project Name</label><input type="text" id="h-project" placeholder="e.g. Main St. Staircase" oninput="calcHR()"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Quote Date</label><input type="text" id="h-date" oninput="calcHR()"></div>
+          <div class="field"><label>Valid For</label>
+            <select id="h-validity" onchange="calcHR()">
+              <option>30 days</option><option>45 days</option><option>60 days</option><option>90 days</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STYLE SELECT -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">🔩</div><div><div class="ph-title">Rail Style</div><div class="ph-sub">Select style — set your rate per linear foot</div></div></div>
+      <div class="pb">
+        <div class="style-grid">
+          <div class="scard sel" data-s="0" onclick="selHRStyle(0)">
+            <div class="scard-vis">
+              <svg viewBox="0 0 160 40" width="140" height="34" fill="none">
+                <line x1="8" y1="20" x2="152" y2="20" stroke="#4A9FE0" stroke-width="4.5" stroke-linecap="round"/>
+                <circle cx="8" cy="20" r="4" fill="#4A9FE0"/><circle cx="152" cy="20" r="4" fill="#4A9FE0"/>
+                <circle cx="52" cy="20" r="3" fill="#2E7DC5"/><circle cx="108" cy="20" r="3" fill="#2E7DC5"/>
+              </svg>
+            </div>
+            <div class="scard-name">Grab Rail</div>
+            <div class="scard-rate">Wall-mount tube</div>
+            <div class="dots"><div class="dot on"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+          <div class="scard" data-s="1" onclick="selHRStyle(1)">
+            <div class="scard-vis">
+              <svg viewBox="0 0 160 40" width="140" height="34" fill="none">
+                <line x1="8" y1="8" x2="152" y2="8" stroke="#28C840" stroke-width="3.5" stroke-linecap="round"/>
+                <line x1="32" y1="8" x2="32" y2="36" stroke="#28C840" stroke-width="3" stroke-linecap="round"/>
+                <line x1="80" y1="8" x2="80" y2="36" stroke="#28C840" stroke-width="3" stroke-linecap="round"/>
+                <line x1="128" y1="8" x2="128" y2="36" stroke="#28C840" stroke-width="3" stroke-linecap="round"/>
+                <line x1="16" y1="36" x2="144" y2="36" stroke="#28C840" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="scard-name">Single Top Rail</div>
+            <div class="scard-rate">Top rail + posts</div>
+            <div class="dots"><div class="dot on" style="background:#28C840;border-color:#28C840"></div><div class="dot on" style="background:#28C840;border-color:#28C840"></div><div class="dot"></div><div class="dot"></div></div>
+          </div>
+          <div class="scard" data-s="2" onclick="selHRStyle(2)">
+            <div class="scard-vis">
+              <svg viewBox="0 0 160 40" width="140" height="34" fill="none">
+                <line x1="8" y1="7" x2="152" y2="7" stroke="#C8A84B" stroke-width="3.5" stroke-linecap="round"/>
+                <line x1="8" y1="33" x2="152" y2="33" stroke="#C8A84B" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="20" y1="7" x2="20" y2="33" stroke="#C8A84B" stroke-width="2"/><line x1="36" y1="7" x2="36" y2="33" stroke="#C8A84B" stroke-width="2"/>
+                <line x1="52" y1="7" x2="52" y2="33" stroke="#C8A84B" stroke-width="2"/><line x1="68" y1="7" x2="68" y2="33" stroke="#C8A84B" stroke-width="2"/>
+                <line x1="84" y1="7" x2="84" y2="33" stroke="#C8A84B" stroke-width="2"/><line x1="100" y1="7" x2="100" y2="33" stroke="#C8A84B" stroke-width="2"/>
+                <line x1="116" y1="7" x2="116" y2="33" stroke="#C8A84B" stroke-width="2"/><line x1="132" y1="7" x2="132" y2="33" stroke="#C8A84B" stroke-width="2"/><line x1="148" y1="7" x2="148" y2="33" stroke="#C8A84B" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="scard-name">Basic Picketed</div>
+            <div class="scard-rate">Top + bottom + pickets</div>
+            <div class="dots"><div class="dot on" style="background:#C8A84B;border-color:#C8A84B"></div><div class="dot on" style="background:#C8A84B;border-color:#C8A84B"></div><div class="dot on" style="background:#C8A84B;border-color:#C8A84B"></div><div class="dot"></div></div>
+          </div>
+          <div class="scard" data-s="3" onclick="selHRStyle(3)">
+            <div class="scard-vis">
+              <svg viewBox="0 0 160 40" width="140" height="34" fill="none">
+                <line x1="8" y1="6" x2="152" y2="6" stroke="#E05A4A" stroke-width="4" stroke-linecap="round"/>
+                <line x1="8" y1="34" x2="152" y2="34" stroke="#E05A4A" stroke-width="3" stroke-linecap="round"/>
+                <line x1="24" y1="6" x2="24" y2="34" stroke="#E05A4A" stroke-width="2.5"/><rect x="21" y="17" width="6" height="6" fill="#E05A4A" transform="rotate(45 24 20)"/>
+                <line x1="52" y1="6" x2="52" y2="34" stroke="#E05A4A" stroke-width="2.5"/><rect x="49" y="17" width="6" height="6" fill="#E05A4A" transform="rotate(45 52 20)"/>
+                <line x1="80" y1="6" x2="80" y2="34" stroke="#E05A4A" stroke-width="2.5"/><rect x="77" y="17" width="6" height="6" fill="#E05A4A" transform="rotate(45 80 20)"/>
+                <line x1="108" y1="6" x2="108" y2="34" stroke="#E05A4A" stroke-width="2.5"/><rect x="105" y="17" width="6" height="6" fill="#E05A4A" transform="rotate(45 108 20)"/>
+                <line x1="136" y1="6" x2="136" y2="34" stroke="#E05A4A" stroke-width="2.5"/><rect x="133" y="17" width="6" height="6" fill="#E05A4A" transform="rotate(45 136 20)"/>
+              </svg>
+            </div>
+            <div class="scard-name">Ornate Picketed</div>
+            <div class="scard-rate">Decorative + detail</div>
+            <div class="dots"><div class="dot on" style="background:#E05A4A;border-color:#E05A4A"></div><div class="dot on" style="background:#E05A4A;border-color:#E05A4A"></div><div class="dot on" style="background:#E05A4A;border-color:#E05A4A"></div><div class="dot on" style="background:#E05A4A;border-color:#E05A4A"></div></div>
+          </div>
+        </div>
+        <div class="section-sep" style="margin-top:20px">Rates Per Linear Foot</div>
+        <div class="field-row" style="grid-template-columns:1fr 1fr 1fr 1fr">
+          <div class="field"><label>Grab Rail</label><div class="iw has-pfx has-sfx"><span class="ipfx">$</span><input type="number" id="hr0" readonly tabindex="-1" style="pointer-events:none;opacity:.6"><span class="isfx">/LF</span></div></div>
+          <div class="field"><label>Single Top</label><div class="iw has-pfx has-sfx"><span class="ipfx">$</span><input type="number" id="hr1" readonly tabindex="-1" style="pointer-events:none;opacity:.6"><span class="isfx">/LF</span></div></div>
+          <div class="field"><label>Basic Pick.</label><div class="iw has-pfx has-sfx"><span class="ipfx">$</span><input type="number" id="hr2" readonly tabindex="-1" style="pointer-events:none;opacity:.6"><span class="isfx">/LF</span></div></div>
+          <div class="field"><label>Ornate Pick.</label><div class="iw has-pfx has-sfx"><span class="ipfx">$</span><input type="number" id="hr3" readonly tabindex="-1" style="pointer-events:none;opacity:.6"><span class="isfx">/LF</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOB DETAILS -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">📐</div><div><div class="ph-title">Job Details</div><div class="ph-sub">Measurements, finish & prep</div></div></div>
+      <div class="pb">
+        <div class="itabs">
+          <div class="itab active" onclick="swITab('hr-meas',this)">Measurements</div>
+          <div class="itab" onclick="swITab('hr-finish',this)">Finish</div>
+          <div class="itab" onclick="swITab('hr-prep',this)">Prep</div>
+        </div>
+        <div class="itab-content active" id="hr-meas">
+          <div class="field-row">
+            <div class="field"><label>Linear Feet</label><div class="iw has-sfx"><input type="number" id="h-lf" min="1" step=".5" value="20" oninput="calcHR()"><span class="isfx">LF</span></div></div>
+            <div class="field"><label>Sections</label><input type="number" id="h-sect" min="1" value="1" oninput="calcHR()"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Posts / Brackets</label><input type="number" id="h-posts" min="0" value="4" oninput="calcHR()"></div>
+            <div class="field"><label>Returns / Bends</label><input type="number" id="h-returns" min="0" value="0" oninput="calcHR()"></div>
+          </div>
+        </div>
+        <div class="itab-content" id="hr-finish">
+          <div class="field-row">
+            <div class="field"><label>Finish Type</label><select id="h-finish" onchange="calcHR()"><option value="1.0">Standard Solid</option><option value="1.2">Metallic / Pearl</option><option value="1.35">Candy / Two-Stage</option><option value="1.15">Texture (Wrinkle/Hammer)</option></select></div>
+            <div class="field"><label>Color Match</label><select id="h-colormatch" onchange="calcHR()"><option value="0">No — Standard RAL</option><option value="50">Custom Match (+$50)</option><option value="100">Exact Formula (+$100)</option></select></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Primer</label><select id="h-primer" onchange="calcHR()"><option value="0">None</option><option value=".25">Zinc (+$0.25/LF)</option><option value=".40">Epoxy (+$0.40/LF)</option></select></div>
+            <div class="field"><label>Colors</label><select id="h-colors" onchange="calcHR()"><option value="1.0">1 color</option><option value="1.3">2 colors (+30%)</option><option value="1.5">3+ colors (+50%)</option></select></div>
+          </div>
+        </div>
+        <div class="itab-content" id="hr-prep">
+          <div class="field-row">
+            <div class="field"><label>Condition</label><select id="h-cond" onchange="calcHR()"><option value="0">New / bare metal</option><option value=".3">Light rust/scale</option><option value=".6">Existing paint — strip</option><option value=".9">Heavy rust</option><option value=".5">Existing powder — strip</option></select></div>
+            <div class="field"><label>Media Blast</label><select id="h-blast" onchange="calcHR()"><option value="0">None</option><option value=".5">Standard (+$0.50/LF)</option><option value=".75">Heavy (+$0.75/LF)</option></select></div>
+          </div>
+          <div class="field-row">
+            <div class="field" style="grid-column:1/-1">
+              <label>Masking & Plugging</label>
+              <div class="mp-widget">
+                <div class="mp-type-row">
+                  <button class="mp-type-btn active" onclick="setMPTab('hr','mask',this)">✂️ Masking</button>
+                  <button class="mp-type-btn" onclick="setMPTab('hr','plug',this)">🔌 Plugging</button>
+                  <button class="mp-type-btn" onclick="setMPTab('hr','none',this)">⊘ None</button>
+                </div>
+                <div class="mp-body active" id="hr-mp-mask">
+                  <div class="mp-header"><span>Description</span><span style="text-align:center">Parts</span><span style="text-align:center">Min/part</span><span style="text-align:center">$/min</span><span style="text-align:right">Total</span></div>
+                  <div class="mp-rows" id="hr-mask-rows"></div>
+                  <button class="mp-add-btn" onclick="addMPRow('hr','mask')">+ Add masking line</button>
+                </div>
+                <div class="mp-body" id="hr-mp-plug">
+                  <div class="mp-header"><span>Description</span><span style="text-align:center">Parts</span><span style="text-align:center">Plugs ea.</span><span style="text-align:center">$/plug</span><span style="text-align:right">Total</span></div>
+                  <div class="mp-rows" id="hr-plug-rows"></div>
+                  <button class="mp-add-btn" onclick="addMPRow('hr','plug')">+ Add plugging line</button>
+                </div>
+                <div class="mp-body" id="hr-mp-none"><div class="mp-none">No masking or plugging — skipped.</div></div>
+              </div>
+            </div>
+            <div class="field"><label>Turnaround</label><select id="h-rush" onchange="calcHR()"><option value="1.0">Standard 5–7 days</option><option value="1.25">Rush 2–3 days (+25%)</option><option value="1.5">Same/Next-day (+50%)</option></select></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXTRA CHARGES -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">➕</div><div><div class="ph-title">Additional Line Items</div><div class="ph-sub">Delivery, hardware, setup fees</div></div></div>
+      <div class="pb">
+        <div id="h-extras"></div>
+        <button class="add-item-btn" onclick="addHRExtra()">+ Add Line Item</button>
+      </div>
+    </div>
+
+  </div><!-- left -->
+
+  <!-- QUOTE PANEL HANDRAIL -->
+  <div>
+    <div class="qpanel">
+      <div class="qph"><div class="qph-label">Live Quote</div><div class="qph-title">Handrail — Linear Foot</div></div>
+      <div class="qbody">
+        <div class="qlabel">Summary</div>
+        <div class="qrow"><div class="qrow-l">Style</div><div class="qrow-v" id="hr-q-style">Grab Rail</div></div>
+        <div class="qrow"><div class="qrow-l">Linear Feet</div><div class="qrow-v" id="hr-q-lf">20 LF</div></div>
+        <div class="qrow"><div class="qrow-l">Base Rate</div><div class="qrow-v" id="hr-q-rate">$4.50/LF</div></div>
+        <div class="qrow hl"><div class="qrow-l">Base Cost</div><div class="qrow-v" id="hr-q-base">$90.00</div></div>
+
+        <div class="qlabel" style="margin-top:16px">Charges</div>
+        <div id="hr-q-charges"></div>
+        <div class="qrow hl"><div class="qrow-l">Subtotal</div><div class="qrow-v" id="hr-q-sub">$90.00</div></div>
+        <div class="qrow" id="hr-q-mult-row" style="display:none"><div class="qrow-l">Multipliers</div><div class="qrow-v" id="hr-q-mult">×1.0</div></div>
+
+        <div class="qtotal">
+          <div><div class="qtotal-l">Total</div><div class="qtotal-sl" id="hr-q-note">20 LF · Grab Rail</div></div>
+          <div class="qtotal-amt" id="hr-q-total"><sup>$</sup>90</div>
+        </div>
+
+        <div class="margin-wrap">
+          <div class="mrow"><div class="mlabel">Est. Margin</div><div class="mpct" id="hr-mpct">—</div></div>
+          <div class="mbar"><div class="mfill" id="hr-mfill" style="width:0%"></div></div>
+          <div class="cost-input-row">
+            <span>Your cost:</span>
+            <span>$</span>
+            <input class="cost-mini-input" type="number" id="hr-cost" placeholder="0" oninput="calcHR()">
+            <span style="color:rgba(138,150,168,.4)">optional</span>
+          </div>
+        </div>
+        <div class="qdivider"></div>
+        <button class="btn btn-p" onclick="printHR()">📄 Generate Quote PDF</button>
+        <button class="btn btn-s" onclick="copyHR()">📋 Copy to Clipboard</button>
+        <button class="btn btn-g" onclick="resetHR()">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- mode-handrail -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: AUTOMOTIVE
+     ════════════════════════════════════════════════ -->
+<div id="mode-auto" style="display:none">
+<div class="page">
+  <div class="left">
+
+    <!-- CUSTOMER -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">👤</div><div><div class="ph-title">Customer & Project</div><div class="ph-sub">Optional — for quote document</div></div></div>
+      <div class="pb">
+        <div class="field-row">
+          <div class="field"><label>Customer Name</label><input type="text" id="a-customer" placeholder="e.g. Jake Smith" oninput="calcAuto()"></div>
+          <div class="field"><label>Vehicle / Project</label><input type="text" id="a-project" placeholder="e.g. 2019 Ford F-150 Restoration" oninput="calcAuto()"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Quote Date</label><input type="text" id="a-date" oninput="calcAuto()"></div>
+          <div class="field"><label>Valid For</label><select id="a-validity" onchange="calcAuto()"><option>30 days</option><option>45 days</option><option>60 days</option><option>90 days</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRICING TABLE -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">💲</div><div><div class="ph-title">Automotive Item Pricing</div><div class="ph-sub">Set your flat price per item — check items to add to quote</div></div></div>
+      <div class="pb" style="padding:0">
+        <div style="padding:16px 24px 8px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border);">
+          <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gray);text-transform:uppercase;">Item</div>
+          <div style="display:flex;gap:24px;align-items:center;">
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gray);text-transform:uppercase;width:80px;text-align:center;">Price ea.</div>
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gray);text-transform:uppercase;width:52px;text-align:center;">Qty</div>
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gray);text-transform:uppercase;width:70px;text-align:right;">Total</div>
+          </div>
+        </div>
+        <div id="auto-items-table"></div>
+        <div style="padding:16px 24px;border-top:1px solid var(--border);">
+          <button class="add-item-btn" onclick="addAutoCustom()" style="margin-top:0">+ Add Custom Item</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINISH & PREP -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">🎨</div><div><div class="ph-title">Finish & Prep Modifiers</div><div class="ph-sub">Applied across all selected items</div></div></div>
+      <div class="pb">
+        <div class="itabs">
+          <div class="itab active" onclick="swITab('a-finish',this)">Finish</div>
+          <div class="itab" onclick="swITab('a-prep',this)">Prep</div>
+          <div class="itab" onclick="swITab('a-extras',this)">Extras</div>
+        </div>
+        <div class="itab-content active" id="a-finish">
+          <div class="field-row">
+            <div class="field"><label>Finish Type</label><select id="a-finish-type" onchange="calcAuto()"><option value="1.0">Standard Solid</option><option value="1.2">Metallic / Pearl</option><option value="1.35">Candy / Two-Stage</option><option value="1.15">Texture (Wrinkle/Hammer)</option></select></div>
+            <div class="field"><label>Color Match</label><select id="a-colormatch" onchange="calcAuto()"><option value="0">No — Standard RAL</option><option value="50">Custom Match (+$50)</option><option value="100">Exact Formula (+$100)</option></select></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Primer</label><select id="a-primer" onchange="calcAuto()"><option value="0">None</option><option value="15">Zinc primer (+$15 flat)</option><option value="30">Epoxy primer (+$30 flat)</option></select></div>
+            <div class="field"><label>Colors</label><select id="a-colors" onchange="calcAuto()"><option value="1.0">1 color</option><option value="1.3">2 colors (+30%)</option><option value="1.5">3+ colors (+50%)</option></select></div>
+          </div>
+        </div>
+        <div class="itab-content" id="a-prep">
+          <div class="field-row">
+            <div class="field"><label>Condition</label><select id="a-cond" onchange="calcAuto()"><option value="1.0">New / bare metal</option><option value="1.15">Light rust / scale (+15%)</option><option value="1.30">Existing paint — strip (+30%)</option><option value="1.50">Heavy rust (+50%)</option><option value="1.25">Existing powder — strip (+25%)</option></select></div>
+            <div class="field"><label>Media Blast</label><select id="a-blast" onchange="calcAuto()"><option value="0">None</option><option value="25">Standard blast (+$25 flat)</option><option value="50">Heavy blast (+$50 flat)</option></select></div>
+          </div>
+          <div class="field-row">
+            <div class="field" style="grid-column:1/-1">
+              <label>Masking & Plugging</label>
+              <div class="mp-widget">
+                <div class="mp-type-row">
+                  <button class="mp-type-btn active" onclick="setMPTab('a','mask',this)">✂️ Masking</button>
+                  <button class="mp-type-btn" onclick="setMPTab('a','plug',this)">🔌 Plugging</button>
+                  <button class="mp-type-btn" onclick="setMPTab('a','none',this)">⊘ None</button>
+                </div>
+                <div class="mp-body active" id="a-mp-mask">
+                  <div class="mp-header"><span>Description</span><span style="text-align:center">Parts</span><span style="text-align:center">Min/part</span><span style="text-align:center">$/min</span><span style="text-align:right">Total</span></div>
+                  <div class="mp-rows" id="a-mask-rows"></div>
+                  <button class="mp-add-btn" onclick="addMPRow('a','mask')">+ Add masking line</button>
+                </div>
+                <div class="mp-body" id="a-mp-plug">
+                  <div class="mp-header"><span>Description</span><span style="text-align:center">Parts</span><span style="text-align:center">Plugs ea.</span><span style="text-align:center">$/plug</span><span style="text-align:right">Total</span></div>
+                  <div class="mp-rows" id="a-plug-rows"></div>
+                  <button class="mp-add-btn" onclick="addMPRow('a','plug')">+ Add plugging line</button>
+                </div>
+                <div class="mp-body" id="a-mp-none"><div class="mp-none">No masking or plugging — skipped.</div></div>
+              </div>
+            </div>
+            <div class="field"><label>Turnaround</label><select id="a-rush" onchange="calcAuto()"><option value="1.0">Standard 5–7 days</option><option value="1.25">Rush 2–3 days (+25%)</option><option value="1.5">Same/Next-day (+50%)</option></select></div>
+          </div>
+        </div>
+        <div class="itab-content" id="a-extras">
+          <div id="a-extra-list"></div>
+          <button class="add-item-btn" onclick="addAutoExtra()" style="margin-top:4px">+ Add Flat Fee / Delivery / Other</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- left -->
+
+  <!-- QUOTE PANEL AUTO -->
+  <div>
+    <div class="qpanel">
+      <div class="qph"><div class="qph-label">Live Quote</div><div class="qph-title">Automotive Items</div></div>
+      <div class="qbody">
+        <div class="qlabel">Selected Items</div>
+        <div id="a-q-items"><div style="font-size:12px;color:var(--gray);padding:8px 0">No items selected yet.</div></div>
+
+        <div class="qlabel" style="margin-top:16px">Charges & Modifiers</div>
+        <div id="a-q-charges"></div>
+        <div class="qrow hl"><div class="qrow-l">Items Subtotal</div><div class="qrow-v" id="a-q-sub">$0.00</div></div>
+        <div class="qrow" id="a-q-mult-row" style="display:none"><div class="qrow-l">Finish / rush mult.</div><div class="qrow-v" id="a-q-mult">×1.0</div></div>
+        <div class="qrow" id="a-q-cond-row" style="display:none"><div class="qrow-l">Condition mult.</div><div class="qrow-v" id="a-q-cond">×1.0</div></div>
+
+        <div class="qtotal">
+          <div><div class="qtotal-l">Total</div><div class="qtotal-sl" id="a-q-note">Automotive</div></div>
+          <div class="qtotal-amt" id="a-q-total"><sup>$</sup>0</div>
+        </div>
+
+        <div class="margin-wrap">
+          <div class="mrow"><div class="mlabel">Est. Margin</div><div class="mpct" id="a-mpct">—</div></div>
+          <div class="mbar"><div class="mfill" id="a-mfill" style="width:0%"></div></div>
+          <div class="cost-input-row">
+            <span>Your cost:</span><span>$</span>
+            <input class="cost-mini-input" type="number" id="a-cost" placeholder="0" oninput="calcAuto()">
+            <span style="color:rgba(138,150,168,.4)">optional</span>
+          </div>
+        </div>
+
+        <div class="qdivider"></div>
+        <button class="btn btn-p" onclick="printAuto()">📄 Generate Quote PDF</button>
+        <button class="btn btn-s" onclick="copyAuto()">📋 Copy to Clipboard</button>
+        <button class="btn btn-g" onclick="resetAuto()">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- mode-auto -->
+
+<!-- ════════════════════════════════════════════════
+     PAGE: SURFACE AREA
+     ════════════════════════════════════════════════ -->
+<div id="mode-surface" style="display:none">
+<div class="page">
+  <div class="left">
+
+    <!-- CUSTOMER -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">👤</div><div><div class="ph-title">Customer & Project</div><div class="ph-sub">Optional — for quote document</div></div></div>
+      <div class="pb">
+        <div class="field-row">
+          <div class="field"><label>Customer / Company</label><input type="text" id="s-customer" placeholder="e.g. Fleet Services LLC" oninput="calcSA()"></div>
+          <div class="field"><label>Project Name</label><input type="text" id="s-project" placeholder="e.g. Equipment Refinish" oninput="calcSA()"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Quote Date</label><input type="text" id="s-date" oninput="calcSA()"></div>
+          <div class="field"><label>Valid For</label><select id="s-validity" onchange="calcSA()"><option>30 days</option><option>45 days</option><option>60 days</option><option>90 days</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI ESTIMATOR -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">🤖</div><div><div class="ph-title">AI Square Footage Estimator</div><div class="ph-sub">Upload a photo — AI estimates surface area & recommends rate</div></div></div>
+      <div class="pb">
+        <div class="ai-estimator">
+          <div class="ai-est-header">
+            <div class="ai-badge">AI Powered</div>
+            <div><div class="ai-est-title">Photo-Based Estimate</div><div class="ai-est-sub">Claude analyzes your photo and estimates coatable surface area</div></div>
+          </div>
+
+          <div id="drop-area" class="drop-zone" ondragover="e=>e.preventDefault()" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+            <input type="file" accept="image/*" id="photo-input" onchange="handleFileSelect(event)">
+            <div class="drop-icon">📷</div>
+            <div class="drop-title">Drop a photo here or click to upload</div>
+            <div class="drop-sub">JPG, PNG, WEBP — photo of the item to be coated</div>
+            <div class="drop-hint">Works best with: wheels, furniture, brackets, enclosures, gates</div>
+          </div>
+
+          <div id="img-preview-section" style="display:none">
+            <div class="img-preview-wrap">
+              <img id="img-preview" class="img-preview" src="" alt="Preview">
+              <div class="img-change" onclick="clearImage()">Change Photo</div>
+            </div>
+          </div>
+
+          <textarea class="ai-describe" id="ai-desc" placeholder="Optional: describe the item — e.g. 'steel industrial equipment cabinet, roughly 4ft tall 2ft wide 2ft deep, multiple doors and hinges'"></textarea>
+
+          <button class="ai-run-btn" id="ai-run-btn" onclick="runAIEstimate()" disabled>
+            <span id="ai-btn-text">Upload a photo to estimate</span>
+          </button>
+
+          <div id="ai-result" style="display:none">
+            <div class="ai-result-box">
+              <div class="ai-result-label">AI Estimate</div>
+              <div class="ai-result-sqft" id="ai-sqft-display">—<span>sq ft</span></div>
+              <div class="ai-result-range" id="ai-range-display"></div>
+              <div class="ai-result-notes" id="ai-notes-display"></div>
+            </div>
+            <button class="ai-apply-btn" onclick="applyAIEstimate()">→ Apply to Quote Line Item</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITEM CATALOG -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">🗂️</div><div><div class="ph-title">Item Type</div><div class="ph-sub">Select category for rate suggestion — or set custom</div></div></div>
+      <div class="pb">
+        <div class="cat-grid" id="cat-grid">
+          <div class="cat-card sel" data-cat="0" onclick="selCat(0)">
+            <div class="cat-icon">🪑</div>
+            <div class="cat-name">Patio / Furniture</div>
+            <div class="cat-desc">Chairs, tables, frames</div>
+            <div class="cat-hint">Typical: 8–25 sq ft</div>
+          </div>
+          <div class="cat-card" data-cat="1" onclick="selCat(1)">
+            <div class="cat-icon">🏗️</div>
+            <div class="cat-name">Structural / Fab</div>
+            <div class="cat-desc">Brackets, frames, beams</div>
+            <div class="cat-hint">Measured or estimated</div>
+          </div>
+          <div class="cat-card" data-cat="2" onclick="selCat(2)">
+            <div class="cat-icon">🚪</div>
+            <div class="cat-name">Gates / Fencing</div>
+            <div class="cat-desc">Driveway, garden gates</div>
+            <div class="cat-hint">Typical: 20–60 sq ft</div>
+          </div>
+          <div class="cat-card" data-cat="3" onclick="selCat(3)">
+            <div class="cat-icon">⚙️</div>
+            <div class="cat-name">Industrial / Equipment</div>
+            <div class="cat-desc">Enclosures, frames, parts</div>
+            <div class="cat-hint">Complex geometry</div>
+          </div>
+          <div class="cat-card" data-cat="4" onclick="selCat(4)">
+            <div class="cat-icon">🏋️</div>
+            <div class="cat-name">Gym Equipment</div>
+            <div class="cat-desc">Racks, benches, frames</div>
+            <div class="cat-hint">Typical: 15–40 sq ft</div>
+          </div>
+          <div class="cat-card" data-cat="5" onclick="selCat(5)">
+            <div class="cat-icon">🏠</div>
+            <div class="cat-name">Architectural</div>
+            <div class="cat-desc">Columns, panels, trim</div>
+            <div class="cat-hint">Large surface area</div>
+          </div>
+          <div class="cat-card" data-cat="6" onclick="selCat(6)">
+            <div class="cat-icon">📦</div>
+            <div class="cat-name">Custom / Other</div>
+            <div class="cat-desc">Anything else</div>
+            <div class="cat-hint">Set your own rate</div>
+          </div>
+        </div>
+
+        <div class="section-sep" style="margin-top:20px">Rate Per Square Foot for Selected Category</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Rate / Sq Ft</label>
+            <div class="iw has-pfx has-sfx"><span class="ipfx">$</span><input type="number" id="cat-rate" readonly tabindex="-1" style="pointer-events:none;opacity:.6"><span class="isfx">/SF</span></div>
+          </div>
+          <div class="field">
+            <label>Minimum Charge</label>
+            <div class="iw has-pfx"><span class="ipfx">$</span><input type="number" id="cat-min" readonly tabindex="-1" style="pointer-events:none;opacity:.6"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINE ITEMS -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">📋</div><div><div class="ph-title">Quote Line Items</div><div class="ph-sub">Add individual parts / items with sq ft and quantity</div></div></div>
+      <div class="pb">
+        <div class="item-row-header">
+          <span>Description</span>
+          <span>Qty</span>
+          <span>Sq Ft ea.</span>
+          <span>Rate/SF</span>
+          <span>Line Total</span>
+          <span></span>
+        </div>
+        <div id="sa-items"></div>
+        <button class="add-item-btn" onclick="addSAItem()">+ Add Item</button>
+      </div>
+    </div>
+
+    <!-- FINISH & PREP -->
+    <div class="panel">
+      <div class="ph"><div class="ph-icon">🎨</div><div><div class="ph-title">Finish & Prep Modifiers</div><div class="ph-sub">Applied to the entire quote</div></div></div>
+      <div class="pb">
+        <div class="itabs">
+          <div class="itab active" onclick="swITab('sa-finish',this)">Finish</div>
+          <div class="itab" onclick="swITab('sa-prep',this)">Prep</div>
+          <div class="itab" onclick="swITab('sa-extras',this)">Extras</div>
+        </div>
+        <div class="itab-content active" id="sa-finish">
+          <div class="field-row">
+            <div class="field"><label>Finish Type</label><select id="s-finish" onchange="calcSA()"><option value="1.0">Standard Solid</option><option value="1.2">Metallic / Pearl</option><option value="1.35">Candy / Two-Stage</option><option value="1.15">Texture (Wrinkle/Hammer)</option></select></div>
+            <div class="field"><label>Color Match</label><select id="s-colormatch" onchange="calcSA()"><option value="0">No — Standard RAL</option><option value="50">Custom Match (+$50)</option><option value="100">Exact Formula (+$100)</option></select></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label>Primer</label><select id="s-primer" onchange="calcSA()"><option value="0">None</option><option value=".15">Zinc (+$0.15/SF)</option><option value=".25">Epoxy (+$0.25/SF)</option></select></div>
+            <div class="field"><label>Colors</label><select id="s-colors" onchange="calcSA()"><option value="1.0">1 color</option><option value="1.3">2 colors (+30%)</option><option value="1.5">3+ colors (+50%)</option></select></div>
+          </div>
+        </div>
+        <div class="itab-content" id="sa-prep">
+          <div class="field-row">
+            <div class="field"><label>Condition</label><select id="s-cond" onchange="calcSA()"><option value="0">New / bare metal</option><option value=".3">Light rust/scale (+$0.30/SF)</option><option value=".6">Existing paint — strip (+$0.60/SF)</option><option value=".9">Heavy rust (+$0.90/SF)</option><option value=".5">Existing powder — strip (+$0.50/SF)</option></select></div>
+            <div class="field"><label>Media Blast</label><select id="s-blast" onchange="calcSA()"><option value="0">None</option><option value=".5">Standard (+$0.50/SF)</option><option value=".75">Heavy (+$0.75/SF)</option></select></div>
+          </div>
+          <div class="field-row">
+            <div class="field" style="grid-column:1/-1">
+              <label>Masking & Plugging</label>
+              <div class="mp-widget">
+                <div class="mp-type-row">
+                  <button class="mp-type-btn active" onclick="setMPTab('s','mask',this)">✂️ Masking</button>
+                  <button class="mp-type-btn" onclick="setMPTab('s','plug',this)">🔌 Plugging</button>
+                  <button class="mp-type-btn" onclick="setMPTab('s','none',this)">⊘ None</button>
+                </div>
+                <div class="mp-body active" id="s-mp-mask">
+                  <div class="mp-header"><span>Description</span><span style="text-align:center">Parts</span><span style="text-align:center">Min/part</span><span style="text-align:center">$/min</span><span style="text-align:right">Total</span></div>
+                  <div class="mp-rows" id="s-mask-rows"></div>
+                  <button class="mp-add-btn" onclick="addMPRow('s','mask')">+ Add masking line</button>
+                </div>
+                <div class="mp-body" id="s-mp-plug">
+                  <div class="mp-header"><span>Description</span><span style="text-align:center">Parts</span><span style="text-align:center">Plugs ea.</span><span style="text-align:center">$/plug</span><span style="text-align:right">Total</span></div>
+                  <div class="mp-rows" id="s-plug-rows"></div>
+                  <button class="mp-add-btn" onclick="addMPRow('s','plug')">+ Add plugging line</button>
+                </div>
+                <div class="mp-body" id="s-mp-none"><div class="mp-none">No masking or plugging — skipped.</div></div>
+              </div>
+            </div>
+            <div class="field"><label>Turnaround</label><select id="s-rush" onchange="calcSA()"><option value="1.0">Standard 5–7 days</option><option value="1.25">Rush 2–3 days (+25%)</option><option value="1.5">Same/Next-day (+50%)</option></select></div>
+          </div>
+        </div>
+        <div class="itab-content" id="sa-extras">
+          <div id="sa-extra-list"></div>
+          <button class="add-item-btn" onclick="addSAExtra()">+ Add Flat Fee / Delivery / Other</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- left -->
+
+  <!-- QUOTE PANEL SA -->
+  <div>
+    <div class="qpanel">
+      <div class="qph"><div class="qph-label">Live Quote</div><div class="qph-title">Surface Area Items</div></div>
+      <div class="qbody">
+
+        <div class="qlabel">Items Breakdown</div>
+        <div id="sa-q-items">
+          <div style="font-size:12px;color:var(--gray);padding:8px 0;">No items added yet.</div>
+        </div>
+
+        <div class="qlabel" style="margin-top:16px">Charges</div>
+        <div id="sa-q-charges"></div>
+        <div class="qrow hl"><div class="qrow-l">Items Subtotal</div><div class="qrow-v" id="sa-q-sub">$0.00</div></div>
+        <div class="qrow" id="sa-q-mult-row" style="display:none"><div class="qrow-l">Multipliers</div><div class="qrow-v" id="sa-q-mult">×1.0</div></div>
+        <div class="qrow" id="sa-q-min-row" style="display:none"><div class="qrow-l">Minimum applied</div><div class="qrow-v" id="sa-q-min">$75.00</div></div>
+
+        <div class="qtotal">
+          <div><div class="qtotal-l">Total</div><div class="qtotal-sl" id="sa-q-note">—</div></div>
+          <div class="qtotal-amt" id="sa-q-total"><sup>$</sup>0</div>
+        </div>
+
+        <div class="margin-wrap">
+          <div class="mrow"><div class="mlabel">Est. Margin</div><div class="mpct" id="sa-mpct">—</div></div>
+          <div class="mbar"><div class="mfill" id="sa-mfill" style="width:0%"></div></div>
+          <div class="cost-input-row">
+            <span>Your cost:</span><span>$</span>
+            <input class="cost-mini-input" type="number" id="sa-cost" placeholder="0" oninput="calcSA()">
+            <span style="color:rgba(138,150,168,.4)">optional</span>
+          </div>
+        </div>
+
+        <div class="qdivider"></div>
+        <button class="btn btn-p" onclick="printSA()">📄 Generate Quote PDF</button>
+        <button class="btn btn-s" onclick="copySA()">📋 Copy to Clipboard</button>
+        <button class="btn btn-g" onclick="resetSA()">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- mode-surface -->
+
+<div class="toast" id="toast"></div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ══════════════════════════════════════════════
+// GLOBALS
+// ══════════════════════════════════════════════
+let hrStyle = 0;
+let hrExtras = [];
+let hrExtraId = 0;
+
+let selectedCat = 0;
+let saItems = [];
+let saItemId = 0;
+let saExtras = [];
+let saExtraId = 0;
+
+let aiImageBase64 = null;
+let aiImageMime = 'image/jpeg';
+let aiEstimatedSqft = null;
+let aiEstimatedRate = null;
+
+const CAT_RATES = [2.50, 2.75, 2.25, 3.00, 2.75, 2.00, 3.50];
+const CAT_NAMES = ['Patio / Furniture','Structural / Fab','Gates / Fencing','Industrial / Equipment','Gym Equipment','Architectural','Custom / Other'];
+
+// ── Mode switch ──────────────────────────────
+function switchMode(mode, el) {
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('mode-handrail').style.display = mode === 'handrail' ? '' : 'none';
+  document.getElementById('mode-auto').style.display = mode === 'auto' ? '' : 'none';
+  document.getElementById('mode-surface').style.display = mode === 'surface' ? '' : 'none';
+}
+
+// ── Inner tabs ───────────────────────────────
+function swITab(id, el) {
+  const parent = el.closest('.panel') || el.closest('[id^=mode-]');
+  el.closest('.itabs').querySelectorAll('.itab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  // hide all siblings tab contents
+  const allContents = el.closest('.pb') ? el.closest('.pb').querySelectorAll('.itab-content') : document.querySelectorAll('#' + id.split('-').slice(0,-1).join('-') + ' .itab-content');
+  document.querySelectorAll('#' + id).forEach(() => {});
+  el.closest('.pb').querySelectorAll('.itab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+// HANDRAIL CALCULATOR
+// ══════════════════════════════════════════════
+function selHRStyle(idx) {
+  hrStyle = idx;
+  document.querySelectorAll('.scard').forEach((c,i) => c.classList.toggle('sel', i === idx));
+  calcHR();
+}
+
+function addHRExtra() {
+  const id = ++hrExtraId;
+  hrExtras.push({id, label:'', amount:0});
+  renderHRExtras();
+}
+function removeHRExtra(id) { hrExtras = hrExtras.filter(e => e.id !== id); renderHRExtras(); calcHR(); }
+function updateHRExtra(id, field, val) {
+  const e = hrExtras.find(e => e.id === id);
+  if(e) e[field] = field === 'amount' ? parseFloat(val)||0 : val;
+  calcHR();
+}
+function renderHRExtras() {
+  const c = document.getElementById('h-extras');
+  c.innerHTML = hrExtras.map(e => `
+    <div class="add-charge-row" style="display:grid;grid-template-columns:1fr 110px 32px;gap:10px;align-items:center;margin-bottom:8px;">
+      <input type="text" placeholder="Description..." value="${e.label}" oninput="updateHRExtra(${e.id},'label',this.value)">
+      <div class="iw has-pfx"><span class="ipfx">$</span><input type="number" min="0" step="1" value="${e.amount||''}" oninput="updateHRExtra(${e.id},'amount',this.value)" style="padding-left:26px"></div>
+      <div class="remove-btn" onclick="removeHRExtra(${e.id})">×</div>
+    </div>`).join('');
+}
+
+function calcHR() {
+  const lf = parseFloat(document.getElementById('h-lf').value)||0;
+  const rate = parseFloat(document.getElementById('hr'+hrStyle).value)||0;
+  const cond = parseFloat(document.getElementById('h-cond').value)||0;
+  const blast = parseFloat(document.getElementById('h-blast').value)||0;
+  const primer = parseFloat(document.getElementById('h-primer').value)||0;
+  const mpCost = getMPTotal('hr');
+  const cm = parseFloat(document.getElementById('h-colormatch').value)||0;
+  const finish = parseFloat(document.getElementById('h-finish').value)||1;
+  const colors = parseFloat(document.getElementById('h-colors').value)||1;
+  const rush = parseFloat(document.getElementById('h-rush').value)||1;
+  const extraTotal = hrExtras.reduce((s,e) => s+(e.amount||0), 0);
+
+  const base = lf * rate;
+  const condCost = lf * cond;
+  const blastCost = lf * blast;
+  const primerCost = lf * primer;
+  const sub = base + condCost + blastCost + primerCost + mpCost + cm + extraTotal;
+  const total = sub * finish * colors * rush;
+
+  const styleNames = ['Grab Rail','Single Top Rail','Basic Picketed','Ornate Picketed'];
+  document.getElementById('hr-q-style').textContent = styleNames[hrStyle];
+  document.getElementById('hr-q-lf').textContent = lf + ' LF';
+  document.getElementById('hr-q-rate').textContent = '$'+rate.toFixed(2)+'/LF';
+  document.getElementById('hr-q-base').textContent = '$'+base.toFixed(2);
+
+  const chargesEl = document.getElementById('hr-q-charges');
+  let chargesHTML = '';
+  if(condCost > 0) chargesHTML += qRow('Prep surcharge', condCost);
+  if(blastCost > 0) chargesHTML += qRow('Media blasting', blastCost);
+  if(primerCost > 0) chargesHTML += qRow('Primer coat', primerCost);
+  const mpLabel = getMPLabel('hr');
+  if(mpCost > 0 && mpLabel) chargesHTML += qRow(mpLabel, mpCost);
+  if(cm > 0) chargesHTML += qRow('Color match', cm);
+  if(extraTotal > 0) chargesHTML += qRow('Additional items', extraTotal);
+  chargesEl.innerHTML = chargesHTML;
+
+  document.getElementById('hr-q-sub').textContent = '$'+sub.toFixed(2);
+  const mult = finish * colors * rush;
+  const multRow = document.getElementById('hr-q-mult-row');
+  multRow.style.display = mult !== 1 ? '' : 'none';
+  document.getElementById('hr-q-mult').textContent = '×' + mult.toFixed(2);
+
+  document.getElementById('hr-q-note').textContent = lf+' LF · '+styleNames[hrStyle];
+  document.getElementById('hr-q-total').innerHTML = '<sup>$</sup>'+Math.round(total).toLocaleString();
+
+  updateMarginBlock('hr', total);
+}
+
+// ══════════════════════════════════════════════
+// SURFACE AREA CALCULATOR
+// ══════════════════════════════════════════════
+function selCat(idx) {
+  selectedCat = idx;
+  document.querySelectorAll('.cat-card').forEach((c,i) => c.classList.toggle('sel', i === idx));
+  document.getElementById('cat-rate').value = CAT_RATES[idx].toFixed(2);
+  calcSA();
+}
+
+function addSAItem(desc, sqft, rate) {
+  const id = ++saItemId;
+  const r = rate || parseFloat(document.getElementById('cat-rate').value) || 3.50;
+  saItems.push({id, desc: desc||'', qty:1, sqft: sqft||0, rate: r});
+  renderSAItems();
+  calcSA();
+}
+function removeSAItem(id) { saItems = saItems.filter(i => i.id !== id); renderSAItems(); calcSA(); }
+function updateSAItem(id, field, val) {
+  const item = saItems.find(i => i.id === id);
+  if(item) item[field] = (field==='desc') ? val : (parseFloat(val)||0);
+  calcSA();
+  rerenderSAItemTotal(id);
+}
+function rerenderSAItemTotal(id) {
+  const item = saItems.find(i => i.id === id);
+  if(!item) return;
+  const el = document.getElementById('sa-line-'+id);
+  if(el) el.textContent = '$'+(item.qty * item.sqft * item.rate).toFixed(2);
+}
+
+function renderSAItems() {
+  const c = document.getElementById('sa-items');
+  if(saItems.length === 0) { c.innerHTML = '<div style="font-size:12px;color:var(--gray);padding:8px 0">No items yet — add one below or use the AI Estimator above.</div>'; return; }
+  c.innerHTML = saItems.map(item => `
+    <div class="item-row">
+      <input type="text" placeholder="e.g. 18in Alloy Wheel" value="${item.desc}" oninput="updateSAItem(${item.id},'desc',this.value)">
+      <div class="iw"><input type="number" min="1" step="1" value="${item.qty}" oninput="updateSAItem(${item.id},'qty',this.value)"></div>
+      <div class="iw has-sfx"><input type="number" min="0" step=".5" value="${item.sqft||''}" placeholder="sq ft" oninput="updateSAItem(${item.id},'sqft',this.value)"><span class="isfx">SF</span></div>
+      <div class="iw has-pfx has-sfx"><span class="ipfx">$</span><input type="number" min="0" step=".25" value="${item.rate}" oninput="updateSAItem(${item.id},'rate',this.value)"><span class="isfx">/SF</span></div>
+      <div class="item-line-total" id="sa-line-${item.id}">$${(item.qty*item.sqft*item.rate).toFixed(2)}</div>
+      <div class="remove-btn" onclick="removeSAItem(${item.id})">×</div>
+    </div>`).join('');
+}
+
+function addSAExtra() {
+  const id = ++saExtraId;
+  saExtras.push({id, label:'', amount:0});
+  renderSAExtras();
+}
+function removeSAExtra(id) { saExtras = saExtras.filter(e => e.id !== id); renderSAExtras(); calcSA(); }
+function updateSAExtra(id, field, val) {
+  const e = saExtras.find(e => e.id === id);
+  if(e) e[field] = field === 'amount' ? parseFloat(val)||0 : val;
+  calcSA();
+}
+function renderSAExtras() {
+  const c = document.getElementById('sa-extra-list');
+  c.innerHTML = saExtras.map(e => `
+    <div style="display:grid;grid-template-columns:1fr 110px 32px;gap:10px;align-items:center;margin-bottom:8px;">
+      <input type="text" placeholder="Description..." value="${e.label}" oninput="updateSAExtra(${e.id},'label',this.value)">
+      <div class="iw has-pfx"><span class="ipfx">$</span><input type="number" min="0" step="1" value="${e.amount||''}" oninput="updateSAExtra(${e.id},'amount',this.value)" style="padding-left:26px"></div>
+      <div class="remove-btn" onclick="removeSAExtra(${e.id})">×</div>
+    </div>`).join('');
+}
+
+function calcSA() {
+  const finish = parseFloat(document.getElementById('s-finish').value)||1;
+  const colors = parseFloat(document.getElementById('s-colors').value)||1;
+  const rush = parseFloat(document.getElementById('s-rush').value)||1;
+  const cond = parseFloat(document.getElementById('s-cond').value)||0;
+  const blast = parseFloat(document.getElementById('s-blast').value)||0;
+  const primerPerSF = parseFloat(document.getElementById('s-primer').value)||0;
+  const mpCost = getMPTotal('s');
+  const cm = parseFloat(document.getElementById('s-colormatch').value)||0;
+  const minCharge = parseFloat(document.getElementById('cat-min').value)||0;
+  const extraTotal = saExtras.reduce((s,e) => s+(e.amount||0), 0);
+
+  const totalSF = saItems.reduce((s,i) => s + i.qty * i.sqft, 0);
+  const itemsBase = saItems.reduce((s,i) => s + i.qty * i.sqft * i.rate, 0);
+  const condCost = totalSF * cond;
+  const blastCost = totalSF * blast;
+  const primerCost = totalSF * primerPerSF;
+  let sub = itemsBase + condCost + blastCost + primerCost + mpCost + cm + extraTotal;
+  const mult = finish * colors * rush;
+  let total = sub * mult;
+  const minApplied = total < minCharge && minCharge > 0 && total > 0;
+  if(minApplied) total = minCharge;
+
+  const ibEl = document.getElementById('sa-q-items');
+  if(saItems.length === 0) {
+    ibEl.innerHTML = '<div style="font-size:12px;color:var(--gray);padding:8px 0">No items added yet.</div>';
+  } else {
+    ibEl.innerHTML = saItems.map(i => `
+      <div class="breakdown-item">
+        <div class="bi-name">${i.desc||'Item'} ×${i.qty}</div>
+        <div class="bi-val">$${(i.qty*i.sqft*i.rate).toFixed(2)}</div>
+      </div>`).join('');
+  }
+
+  const chEl = document.getElementById('sa-q-charges');
+  let ch = '';
+  if(condCost>0) ch += qRow('Prep surcharge', condCost);
+  if(blastCost>0) ch += qRow('Media blasting', blastCost);
+  if(primerCost>0) ch += qRow('Primer coat', primerCost);
+  const mpLabel = getMPLabel('s');
+  if(mpCost>0 && mpLabel) ch += qRow(mpLabel, mpCost);
+  if(cm>0) ch += qRow('Color match', cm);
+  if(extraTotal>0) ch += qRow('Additional items', extraTotal);
+  chEl.innerHTML = ch;
+
+  document.getElementById('sa-q-sub').textContent = '$'+sub.toFixed(2);
+  const multRow = document.getElementById('sa-q-mult-row');
+  multRow.style.display = mult !== 1 ? '' : 'none';
+  document.getElementById('sa-q-mult').textContent = '×'+mult.toFixed(2);
+  const minRow = document.getElementById('sa-q-min-row');
+  minRow.style.display = minApplied ? '' : 'none';
+  document.getElementById('sa-q-min').textContent = '$'+minCharge.toFixed(2);
+
+  const catName = CAT_NAMES[selectedCat];
+  document.getElementById('sa-q-note').textContent = (totalSF>0 ? totalSF.toFixed(1)+' SF · ' : '') + catName;
+  document.getElementById('sa-q-total').innerHTML = '<sup>$</sup>'+Math.round(total).toLocaleString();
+
+  updateMarginBlock('sa', total);
+}
+
+// ══════════════════════════════════════════════
+// AUTOMOTIVE CALCULATOR
+// ══════════════════════════════════════════════
+
+// Default automotive item catalog with editable prices
+const AUTO_CATALOG = [
+  // WHEELS & RIMS
+  { group:'Wheels & Rims',       id:'w1',  icon:'🛞', name:'Standard Wheel / Rim (up to 18")',       price:75,  qty:0 },
+  { group:'Wheels & Rims',       id:'w2',  icon:'🛞', name:'Large Wheel / Rim (19"–22")',             price:95,  qty:0 },
+  { group:'Wheels & Rims',       id:'w3',  icon:'🛞', name:'Oversized Wheel (23"+)',                  price:125, qty:0 },
+  { group:'Wheels & Rims',       id:'w4',  icon:'🛞', name:'Motorcycle Wheel (front or rear)',        price:60,  qty:0 },
+  { group:'Wheels & Rims',       id:'w5',  icon:'🛞', name:'Beadlock Ring',                           price:35,  qty:0 },
+  { group:'Wheels & Rims',       id:'w6',  icon:'🛞', name:'Spare Wheel',                             price:65,  qty:0 },
+  // BIKE & MOTORCYCLE FRAMES
+  { group:'Bike & Motorcycle',   id:'m1',  icon:'🏍️', name:'Motorcycle Frame (standard)',             price:185, qty:0 },
+  { group:'Bike & Motorcycle',   id:'m2',  icon:'🏍️', name:'Motorcycle Frame (chopper/custom)',       price:250, qty:0 },
+  { group:'Bike & Motorcycle',   id:'m3',  icon:'🚲', name:'Bicycle Frame (road/mountain)',            price:95,  qty:0 },
+  { group:'Bike & Motorcycle',   id:'m4',  icon:'🚲', name:'Bicycle Fork',                             price:45,  qty:0 },
+  { group:'Bike & Motorcycle',   id:'m5',  icon:'🏍️', name:'Motorcycle Forks (pair)',                 price:85,  qty:0 },
+  { group:'Bike & Motorcycle',   id:'m6',  icon:'🏍️', name:'Swingarm',                                price:75,  qty:0 },
+  { group:'Bike & Motorcycle',   id:'m7',  icon:'🏍️', name:'Gas Tank (exterior only)',                price:110, qty:0 },
+  { group:'Bike & Motorcycle',   id:'m8',  icon:'🏍️', name:'Fender (front or rear)',                  price:55,  qty:0 },
+  // SUSPENSION & BRAKES
+  { group:'Suspension & Brakes', id:'s1',  icon:'🔧', name:'Brake Caliper (single)',                  price:55,  qty:0 },
+  { group:'Suspension & Brakes', id:'s2',  icon:'🔧', name:'Brake Caliper Set (4)',                   price:195, qty:0 },
+  { group:'Suspension & Brakes', id:'s3',  icon:'🔧', name:'Control Arm (single)',                    price:65,  qty:0 },
+  { group:'Suspension & Brakes', id:'s4',  icon:'🔧', name:'Control Arm Set (upper + lower pair)',    price:220, qty:0 },
+  { group:'Suspension & Brakes', id:'s5',  icon:'🔧', name:'Spindle / Knuckle',                       price:70,  qty:0 },
+  { group:'Suspension & Brakes', id:'s6',  icon:'🔧', name:'Sway Bar',                                price:55,  qty:0 },
+  { group:'Suspension & Brakes', id:'s7',  icon:'🔧', name:'Trailing Arm',                            price:75,  qty:0 },
+  // CHASSIS & UNDERCARRIAGE
+  { group:'Chassis & Undercarriage', id:'c1', icon:'🚙', name:'Subframe',                             price:175, qty:0 },
+  { group:'Chassis & Undercarriage', id:'c2', icon:'🚙', name:'K-Member / Crossmember',               price:150, qty:0 },
+  { group:'Chassis & Undercarriage', id:'c3', icon:'🚙', name:'Differential Cover',                   price:65,  qty:0 },
+  { group:'Chassis & Undercarriage', id:'c4', icon:'🚙', name:'Axle Housing',                         price:135, qty:0 },
+  { group:'Chassis & Undercarriage', id:'c5', icon:'🚙', name:'Leaf Spring Pack',                     price:85,  qty:0 },
+  { group:'Chassis & Undercarriage', id:'c6', icon:'🚙', name:'Frame Rails (per side)',               price:195, qty:0 },
+  // ENGINE BAY & EXHAUST
+  { group:'Engine Bay & Exhaust',    id:'e1', icon:'🔥', name:'Exhaust Headers (ceramic)',             price:145, qty:0 },
+  { group:'Engine Bay & Exhaust',    id:'e2', icon:'🔥', name:'Exhaust Manifold',                      price:95,  qty:0 },
+  { group:'Engine Bay & Exhaust',    id:'e3', icon:'🔥', name:'Valve Covers (pair)',                   price:110, qty:0 },
+  { group:'Engine Bay & Exhaust',    id:'e4', icon:'🔥', name:'Intake Manifold',                       price:120, qty:0 },
+  { group:'Engine Bay & Exhaust',    id:'e5', icon:'🔥', name:'Throttle Body',                         price:55,  qty:0 },
+  { group:'Engine Bay & Exhaust',    id:'e6', icon:'🔥', name:'Alternator / Accessory Bracket',        price:45,  qty:0 },
+  { group:'Engine Bay & Exhaust',    id:'e7', icon:'🔥', name:'Oil Pan',                               price:75,  qty:0 },
+  // EXTERIOR ACCESSORIES
+  { group:'Exterior Accessories',    id:'x1', icon:'🚛', name:'Bumper (front or rear)',                price:125, qty:0 },
+  { group:'Exterior Accessories',    id:'x2', icon:'🚛', name:'Grille',                                price:85,  qty:0 },
+  { group:'Exterior Accessories',    id:'x3', icon:'🚛', name:'Running Boards / Steps (pair)',         price:150, qty:0 },
+  { group:'Exterior Accessories',    id:'x4', icon:'🚛', name:'Nerf Bars (pair)',                      price:130, qty:0 },
+  { group:'Exterior Accessories',    id:'x5', icon:'🚛', name:'Bull Bar / Push Bar',                   price:155, qty:0 },
+  { group:'Exterior Accessories',    id:'x6', icon:'🚛', name:'Roof Rack',                             price:165, qty:0 },
+  { group:'Exterior Accessories',    id:'x7', icon:'🚛', name:'Trailer Hitch',                         price:75,  qty:0 },
+  { group:'Exterior Accessories',    id:'x8', icon:'🚛', name:'Skid Plate',                            price:95,  qty:0 },
+  { group:'Exterior Accessories',    id:'x9', icon:'🚛', name:'Tonneau Cover Frame',                   price:110, qty:0 },
+];
+
+// Group items by category
+function getAutoGroups() {
+  const groups = {};
+  AUTO_CATALOG.forEach(item => {
+    if(!groups[item.group]) groups[item.group] = [];
+    groups[item.group].push(item);
+  });
+  return groups;
+}
+
+let autoCustomItems = [];
+let autoCustomId = 0;
+let autoExtras = [];
+let autoExtraId = 0;
+
+function renderAutoTable() {
+  const container = document.getElementById('auto-items-table');
+  const groups = getAutoGroups();
+  let html = '';
+
+  Object.entries(groups).forEach(([groupName, items]) => {
+    html += `<div style="background:rgba(46,125,197,0.06);padding:8px 24px;border-bottom:1px solid var(--border);border-top:1px solid var(--border);">
+      <span style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase">${groupName}</span>
+    </div>`;
+
+    items.forEach(item => {
+      const lineTotal = item.qty * item.price;
+      html += `
+      <div class="auto-item-row" id="arow-${item.id}" style="display:flex;align-items:center;padding:10px 24px;border-bottom:1px solid var(--border);gap:12px;transition:background .15s;${item.qty > 0 ? 'background:rgba(46,125,197,0.05)' : ''}">
+        <div style="font-size:16px;flex-shrink:0">${item.icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:600;color:${item.qty > 0 ? 'var(--bright)' : 'var(--lgray)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;flex-shrink:0">
+          <div class="iw has-pfx" style="width:96px">
+            <span class="ipfx">$</span>
+            <input type="number" min="0" step="1" value="${item.price}"
+              style="padding-left:24px;font-size:12px;padding-top:7px;padding-bottom:7px;width:96px;pointer-events:none;opacity:.6"
+              readonly tabindex="-1"
+              title="Set in Admin Pricing">
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button onclick="changeAutoQty('${item.id}',-1)"
+              style="width:24px;height:24px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--lgray);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;border-radius:2px;line-height:1;flex-shrink:0"
+              onmouseover="this.style.background='rgba(46,125,197,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">−</button>
+            <input type="number" min="0" step="1" value="${item.qty}"
+              style="width:40px;text-align:center;font-size:13px;font-weight:700;padding:4px 6px;background:${item.qty>0 ? 'rgba(46,125,197,0.1)' : 'rgba(255,255,255,0.04)'};border:1px solid ${item.qty>0 ? 'var(--accent)' : 'var(--border)'}"
+              oninput="setAutoQty('${item.id}',this.value)">
+            <button onclick="changeAutoQty('${item.id}',1)"
+              style="width:24px;height:24px;background:rgba(46,125,197,0.12);border:1px solid var(--bblue);color:var(--bright);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;border-radius:2px;line-height:1;flex-shrink:0"
+              onmouseover="this.style.background='rgba(46,125,197,0.25)'" onmouseout="this.style.background='rgba(46,125,197,0.12)'">+</button>
+          </div>
+          <div style="width:70px;text-align:right;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:${lineTotal>0 ? 'var(--bright)' : 'var(--gray)'}">
+            $${lineTotal.toFixed(2)}
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+
+  // custom items
+  if(autoCustomItems.length > 0) {
+    html += `<div style="background:rgba(46,125,197,0.06);padding:8px 24px;border-bottom:1px solid var(--border);border-top:1px solid var(--border);">
+      <span style="font-size:9px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase">Custom Items</span>
+    </div>`;
+    autoCustomItems.forEach(ci => {
+      html += `
+      <div style="display:flex;align-items:center;padding:10px 24px;border-bottom:1px solid var(--border);gap:12px">
+        <div style="font-size:16px">📦</div>
+        <input type="text" value="${ci.name}" placeholder="Item description..."
+          style="flex:1;font-size:12px;font-weight:600"
+          oninput="updateAutoCustom(${ci.id},'name',this.value)">
+        <div class="iw has-pfx" style="width:96px"><span class="ipfx">$</span>
+          <input type="number" min="0" step="1" value="${ci.price||''}" placeholder="0"
+            style="padding-left:24px;font-size:12px;padding-top:7px;padding-bottom:7px;width:96px"
+            oninput="updateAutoCustom(${ci.id},'price',this.value)">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button onclick="changeAutoCustomQty(${ci.id},-1)"
+            style="width:24px;height:24px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--lgray);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:2px;line-height:1"
+            onmouseover="this.style.background='rgba(46,125,197,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">−</button>
+          <input type="number" min="0" value="${ci.qty}"
+            style="width:40px;text-align:center;font-size:13px;font-weight:700;padding:4px 6px"
+            oninput="updateAutoCustom(${ci.id},'qty',this.value)">
+          <button onclick="changeAutoCustomQty(${ci.id},1)"
+            style="width:24px;height:24px;background:rgba(46,125,197,0.12);border:1px solid var(--bblue);color:var(--bright);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:2px;line-height:1"
+            onmouseover="this.style.background='rgba(46,125,197,0.25)'" onmouseout="this.style.background='rgba(46,125,197,0.12)'">+</button>
+        </div>
+        <div style="width:70px;text-align:right;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--bright)">
+          $${((ci.qty||0)*(ci.price||0)).toFixed(2)}
+        </div>
+        <div class="remove-btn" onclick="removeAutoCustom(${ci.id})">×</div>
+      </div>`;
+    });
+  }
+
+  container.innerHTML = html;
+}
+
+function updateAutoPrice(itemId, val) {
+  const item = AUTO_CATALOG.find(i => i.id === itemId);
+  if(item) item.price = parseFloat(val)||0;
+  calcAuto();
+}
+
+function changeAutoQty(itemId, delta) {
+  const item = AUTO_CATALOG.find(i => i.id === itemId);
+  if(item) { item.qty = Math.max(0, item.qty + delta); renderAutoTable(); calcAuto(); }
+}
+
+function setAutoQty(itemId, val) {
+  const item = AUTO_CATALOG.find(i => i.id === itemId);
+  if(item) { item.qty = Math.max(0, parseInt(val)||0); calcAuto(); }
+}
+
+function addAutoCustom() {
+  autoCustomItems.push({id: ++autoCustomId, name:'', price:0, qty:1});
+  renderAutoTable();
+  calcAuto();
+}
+
+function updateAutoCustom(id, field, val) {
+  const ci = autoCustomItems.find(c => c.id === id);
+  if(ci) ci[field] = (field === 'name') ? val : (parseFloat(val)||0);
+  calcAuto();
+}
+
+function changeAutoCustomQty(id, delta) {
+  const ci = autoCustomItems.find(c => c.id === id);
+  if(ci) { ci.qty = Math.max(0, ci.qty + delta); renderAutoTable(); calcAuto(); }
+}
+
+function removeAutoCustom(id) {
+  autoCustomItems = autoCustomItems.filter(c => c.id !== id);
+  renderAutoTable();
+  calcAuto();
+}
+
+function addAutoExtra() {
+  autoExtras.push({id: ++autoExtraId, label:'', amount:0});
+  renderAutoExtras();
+}
+function removeAutoExtra(id) { autoExtras = autoExtras.filter(e => e.id !== id); renderAutoExtras(); calcAuto(); }
+function updateAutoExtra(id, field, val) {
+  const e = autoExtras.find(e => e.id === id);
+  if(e) e[field] = field === 'amount' ? parseFloat(val)||0 : val;
+  calcAuto();
+}
+function renderAutoExtras() {
+  const c = document.getElementById('a-extra-list');
+  c.innerHTML = autoExtras.map(e => `
+    <div style="display:grid;grid-template-columns:1fr 110px 32px;gap:10px;align-items:center;margin-bottom:8px;">
+      <input type="text" placeholder="Description..." value="${e.label}" oninput="updateAutoExtra(${e.id},'label',this.value)">
+      <div class="iw has-pfx"><span class="ipfx">$</span><input type="number" min="0" step="1" value="${e.amount||''}" oninput="updateAutoExtra(${e.id},'amount',this.value)" style="padding-left:26px"></div>
+      <div class="remove-btn" onclick="removeAutoExtra(${e.id})">×</div>
+    </div>`).join('');
+}
+
+function calcAuto() {
+  const finishMult = parseFloat(document.getElementById('a-finish-type').value)||1;
+  const colorsMult = parseFloat(document.getElementById('a-colors').value)||1;
+  const rushMult   = parseFloat(document.getElementById('a-rush').value)||1;
+  const condMult   = parseFloat(document.getElementById('a-cond').value)||1;
+  const blastFlat  = parseFloat(document.getElementById('a-blast').value)||0;
+  const primerFlat = parseFloat(document.getElementById('a-primer').value)||0;
+  const mpCost     = getMPTotal('a');
+  const cmFlat     = parseFloat(document.getElementById('a-colormatch').value)||0;
+  const extraTotal = autoExtras.reduce((s,e) => s+(e.amount||0), 0);
+
+  const selectedItems = AUTO_CATALOG.filter(i => i.qty > 0);
+  const customSelected = autoCustomItems.filter(i => i.qty > 0 && i.price > 0);
+
+  const itemsBase = selectedItems.reduce((s,i) => s + i.qty * i.price, 0)
+                  + customSelected.reduce((s,i) => s + i.qty * i.price, 0);
+
+  const flatCharges = blastFlat + primerFlat + mpCost + cmFlat + extraTotal;
+  const sub = itemsBase + flatCharges;
+  const combMult = finishMult * colorsMult * rushMult;
+  const total = sub * condMult * combMult;
+
+  const qItems = document.getElementById('a-q-items');
+  if(selectedItems.length === 0 && customSelected.length === 0) {
+    qItems.innerHTML = '<div style="font-size:12px;color:var(--gray);padding:8px 0">No items selected yet.</div>';
+  } else {
+    qItems.innerHTML = [...selectedItems, ...customSelected].map(i => `
+      <div class="breakdown-item">
+        <div class="bi-name">${i.name||'Custom'} ×${i.qty}</div>
+        <div class="bi-val">$${(i.qty*i.price).toFixed(2)}</div>
+      </div>`).join('');
+  }
+
+  const chargesEl = document.getElementById('a-q-charges');
+  let ch = '';
+  if(blastFlat>0)  ch += qRow('Media blasting', blastFlat);
+  if(primerFlat>0) ch += qRow('Primer', primerFlat);
+  const mpLabel = getMPLabel('a');
+  if(mpCost>0 && mpLabel) ch += qRow(mpLabel, mpCost);
+  if(cmFlat>0)     ch += qRow('Color match', cmFlat);
+  if(extraTotal>0) ch += qRow('Additional items', extraTotal);
+  chargesEl.innerHTML = ch;
+
+  document.getElementById('a-q-sub').textContent = '$'+sub.toFixed(2);
+
+  const condRow = document.getElementById('a-q-cond-row');
+  condRow.style.display = condMult !== 1 ? '' : 'none';
+  document.getElementById('a-q-cond').textContent = '×'+condMult.toFixed(2);
+
+  const multRow = document.getElementById('a-q-mult-row');
+  multRow.style.display = combMult !== 1 ? '' : 'none';
+  document.getElementById('a-q-mult').textContent = '×'+combMult.toFixed(2);
+
+  const totalItems = selectedItems.length + customSelected.length;
+  document.getElementById('a-q-note').textContent = totalItems > 0
+    ? totalItems + ' item type' + (totalItems !== 1 ? 's' : '') + ' · Automotive'
+    : 'Automotive';
+  document.getElementById('a-q-total').innerHTML = '<sup>$</sup>'+Math.round(total).toLocaleString();
+
+  updateMarginBlock('a', total);
+  renderAutoTable();
+}
+
+function getAutoTotal() {
+  const finishMult = parseFloat(document.getElementById('a-finish-type').value)||1;
+  const colorsMult = parseFloat(document.getElementById('a-colors').value)||1;
+  const rushMult   = parseFloat(document.getElementById('a-rush').value)||1;
+  const condMult   = parseFloat(document.getElementById('a-cond').value)||1;
+  const blastFlat  = parseFloat(document.getElementById('a-blast').value)||0;
+  const primerFlat = parseFloat(document.getElementById('a-primer').value)||0;
+  const mpCost     = getMPTotal('a');
+  const cmFlat     = parseFloat(document.getElementById('a-colormatch').value)||0;
+  const extraTotal = autoExtras.reduce((s,e) => s+(e.amount||0), 0);
+  const itemsBase  = AUTO_CATALOG.filter(i=>i.qty>0).reduce((s,i)=>s+i.qty*i.price,0)
+                   + autoCustomItems.filter(i=>i.qty>0&&i.price>0).reduce((s,i)=>s+i.qty*i.price,0);
+  const sub = itemsBase + blastFlat + primerFlat + mpCost + cmFlat + extraTotal;
+  return sub * condMult * finishMult * colorsMult * rushMult;
+}
+
+function printAuto() {
+  const customer = document.getElementById('a-customer').value||'Customer';
+  const project  = document.getElementById('a-project').value||'Automotive Project';
+  const date     = document.getElementById('a-date').value||new Date().toLocaleDateString();
+  const validity = document.getElementById('a-validity').value;
+  const total    = getAutoTotal();
+  const selected = AUTO_CATALOG.filter(i=>i.qty>0);
+  const custom   = autoCustomItems.filter(i=>i.qty>0&&i.price>0);
+  const rows = [...selected,...custom].map(i =>
+    `<tr><td><strong>${i.name||'Custom Item'}</strong></td><td>${i.qty}</td><td>$${i.price.toFixed(2)} ea.</td><td>$${(i.qty*i.price).toFixed(2)}</td></tr>`
+  ).join('')
+  + autoExtras.filter(e=>e.amount>0).map(e =>
+    `<tr><td>${e.label||'Additional'}</td><td>—</td><td>flat</td><td>$${e.amount.toFixed(2)}</td></tr>`
+  ).join('');
+  openPrintWindow(customer, project, date, validity, total, rows);
+}
+
+function copyAuto() {
+  const total = getAutoTotal();
+  const lines = AUTO_CATALOG.filter(i=>i.qty>0)
+    .map(i=>`  ${i.name} ×${i.qty} @ $${i.price.toFixed(2)} ea. = $${(i.qty*i.price).toFixed(2)}`).join('\n');
+  const text=`NEXUS POWDER COATING — QUOTE\n================\nCustomer: ${document.getElementById('a-customer').value||'—'}\nProject: ${document.getElementById('a-project').value||'—'}\n\nItems:\n${lines}\n\nTOTAL: $${total.toFixed(2)}\n\nNexus Powder Coating, Inc.\n970-520-7288 | Info@NexusPowderCoating.com`;
+  navigator.clipboard.writeText(text).then(()=>showToast('Quote copied!'));
+}
+
+function resetAuto() {
+  AUTO_CATALOG.forEach(i => { i.qty = 0; });
+  autoCustomItems = [];
+  autoExtras = [];
+  renderAutoTable();
+  renderAutoExtras();
+  calcAuto();
+  showToast('Reset.');
+}
+
+// ══════════════════════════════════════════════
+// MASKING & PLUGGING ENGINE
+// ══════════════════════════════════════════════
+const mpData = {
+  hr: { mask: [], plug: [], activeTab: 'mask', maskIdSeq:0, plugIdSeq:0 },
+  a:  { mask: [], plug: [], activeTab: 'mask', maskIdSeq:0, plugIdSeq:0 },
+  s:  { mask: [], plug: [], activeTab: 'mask', maskIdSeq:0, plugIdSeq:0 },
+};
+const MP_DEFAULT_MASK_RATE = 1.50;
+const MP_DEFAULT_PLUG_RATE = 0.75;
+
+function setMPTab(prefix, tab, btnEl) {
+  mpData[prefix].activeTab = tab;
+  btnEl.closest('.mp-type-row').querySelectorAll('.mp-type-btn').forEach(b => b.classList.remove('active'));
+  btnEl.classList.add('active');
+  btnEl.closest('.mp-widget').querySelectorAll('.mp-body').forEach(b => b.classList.remove('active'));
+  document.getElementById(prefix+'-mp-'+tab).classList.add('active');
+  calcForPrefix(prefix);
+}
+
+function addMPRow(prefix, type) {
+  const d = mpData[prefix];
+  const id = ++d[type+'IdSeq'];
+  const rate = type === 'mask'
+    ? (d.maskDefaultRate ?? MP_DEFAULT_MASK_RATE)
+    : (d.plugDefaultRate ?? MP_DEFAULT_PLUG_RATE);
+  d[type].push({id, desc:'', parts:1, qty:1, rate});
+  renderMPRows(prefix, type);
+  calcForPrefix(prefix);
+}
+
+function removeMPRow(prefix, type, id) {
+  mpData[prefix][type] = mpData[prefix][type].filter(r => r.id !== id);
+  renderMPRows(prefix, type);
+  calcForPrefix(prefix);
+}
+
+function updateMPRow(prefix, type, id, field, val) {
+  const row = mpData[prefix][type].find(r => r.id === id);
+  if(row) row[field] = field === 'desc' ? val : (parseFloat(val)||0);
+  const el = document.getElementById(`mp-total-${prefix}-${type}-${id}`);
+  if(el && row) el.textContent = '$' + (row.parts * row.qty * row.rate).toFixed(2);
+  calcForPrefix(prefix);
+}
+
+function renderMPRows(prefix, type) {
+  const container = document.getElementById(`${prefix}-${type}-rows`);
+  if(!container) return;
+  const rows = mpData[prefix][type];
+  if(rows.length === 0) {
+    container.innerHTML = `<div class="mp-none">No lines yet — click below to add one.</div>`;
+    return;
+  }
+  container.innerHTML = rows.map(row => {
+    const total = (row.parts * row.qty * row.rate).toFixed(2);
+    const ph = type==='mask' ? 'e.g. Mounting holes' : 'e.g. Threaded inserts';
+    return `
+    <div class="mp-row">
+      <input type="text" placeholder="${ph}" value="${row.desc}"
+        oninput="updateMPRow('${prefix}','${type}',${row.id},'desc',this.value)"
+        style="font-size:11px;padding:7px 8px">
+      <input type="number" min="1" step="1" value="${row.parts}" title="Number of parts"
+        oninput="updateMPRow('${prefix}','${type}',${row.id},'parts',this.value)">
+      <input type="number" min="0" step="0.5" value="${row.qty}" title="${type==='mask' ? 'Minutes per part' : 'Plugs per part'}"
+        oninput="updateMPRow('${prefix}','${type}',${row.id},'qty',this.value)">
+      <div class="iw has-pfx" style="width:56px">
+        <span class="ipfx">$</span>
+        <input type="number" min="0" step="0.05" value="${row.rate}"
+          oninput="updateMPRow('${prefix}','${type}',${row.id},'rate',this.value)">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px">
+        <span class="mp-row-total" id="mp-total-${prefix}-${type}-${row.id}">$${total}</span>
+        <div class="remove-btn" style="width:22px;height:22px;font-size:13px" onclick="removeMPRow('${prefix}','${type}',${row.id})">×</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function getMPTotal(prefix) {
+  const d = mpData[prefix];
+  if(d.activeTab === 'none') return 0;
+  return d[d.activeTab].reduce((s,r) => s + r.parts * r.qty * r.rate, 0);
+}
+
+function getMPLabel(prefix) {
+  const d = mpData[prefix];
+  if(d.activeTab === 'none') return null;
+  if(d[d.activeTab].length === 0) return null;
+  return d.activeTab === 'mask' ? 'Masking' : 'Plugging';
+}
+
+function calcForPrefix(p) {
+  if(p==='hr') calcHR(); else if(p==='a') calcAuto(); else calcSA();
+}
+
+function qRow(label, amount) {
+  return `<div class="qrow"><div class="qrow-l">${label}</div><div class="qrow-v">$${amount.toFixed(2)}</div></div>`;
+}
+
+function updateMarginBlock(prefix, total) {
+  const cost = parseFloat(document.getElementById(prefix+'-cost').value)||0;
+  const pctEl = document.getElementById(prefix+'-mpct');
+  const fillEl = document.getElementById(prefix+'-mfill');
+  if(cost > 0 && total > 0) {
+    const pct = ((total-cost)/total)*100;
+    pctEl.textContent = pct.toFixed(1)+'%';
+    pctEl.style.color = pct >= 40 ? 'var(--green)' : pct >= 20 ? '#C8A84B' : 'var(--red)';
+    fillEl.style.width = Math.min(pct, 100)+'%';
+  } else {
+    pctEl.textContent = '—'; pctEl.style.color = 'var(--green)'; fillEl.style.width = '0%';
+  }
+}
+
+// ══════════════════════════════════════════════
+// AI ESTIMATOR
+// ══════════════════════════════════════════════
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if(file) loadImageFile(file);
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-area').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if(file && file.type.startsWith('image/')) loadImageFile(file);
+}
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('drop-area').classList.add('drag');
+}
+
+function loadImageFile(file) {
+  aiImageMime = file.type || 'image/jpeg';
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const result = ev.target.result;
+    aiImageBase64 = result.split(',')[1];
+    document.getElementById('img-preview').src = result;
+    document.getElementById('img-preview-section').style.display = '';
+    document.getElementById('drop-area').style.display = 'none';
+    document.getElementById('ai-run-btn').disabled = false;
+    document.getElementById('ai-btn-text').textContent = '🤖 Estimate Square Footage with AI';
+    document.getElementById('ai-result').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImage() {
+  aiImageBase64 = null;
+  document.getElementById('img-preview-section').style.display = 'none';
+  document.getElementById('drop-area').style.display = '';
+  document.getElementById('photo-input').value = '';
+  document.getElementById('ai-run-btn').disabled = true;
+  document.getElementById('ai-btn-text').textContent = 'Upload a photo to estimate';
+  document.getElementById('ai-result').style.display = 'none';
+}
+
+async function runAIEstimate() {
+  if(!aiImageBase64) return;
+  const btn = document.getElementById('ai-run-btn');
+  const btnText = document.getElementById('ai-btn-text');
+  btn.disabled = true;
+  btnText.innerHTML = '<div class="spinner"></div> Analyzing photo...';
+
+  const desc = document.getElementById('ai-desc').value;
+  const catName = CAT_NAMES[selectedCat];
+
+  const prompt = `You are an expert powder coating estimator with 15+ years of experience. Analyze this image of a ${catName} item that needs powder coating.
+
+${desc ? `Additional context from customer: "${desc}"` : ''}
+
+Your task:
+1. Estimate the total COATABLE surface area in square feet (all surfaces that would receive powder coating)
+2. Account for complex geometry, internal surfaces, cutouts, and hard-to-reach areas
+3. Provide a realistic range (min and max sq ft)
+4. Suggest a powder coating rate per square foot for this item type
+5. Note any prep or complexity factors that would affect the quote
+
+Respond in this EXACT JSON format only, no other text:
+{
+  "sqft_estimate": <number - your best single estimate>,
+  "sqft_min": <number - low end>,
+  "sqft_max": <number - high end>,
+  "suggested_rate": <number - $/sq ft>,
+  "item_description": "<brief description of what you see>",
+  "complexity": "<simple|moderate|complex|highly complex>",
+  "prep_notes": "<any prep or surface condition notes>",
+  "coating_notes": "<any coating application notes>",
+  "confidence": "<low|medium|high>"
+}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: [
+            {type:'image', source:{type:'base64', media_type: aiImageMime, data: aiImageBase64}},
+            {type:'text', text: prompt}
+          ]
+        }]
+      })
+    });
+
+    const data = await resp.json();
+    const text = data.content[0].text.replace(/```json|```/g,'').trim();
+    const result = JSON.parse(text);
+
+    aiEstimatedSqft = result.sqft_estimate;
+    aiEstimatedRate = result.suggested_rate;
+
+    document.getElementById('ai-sqft-display').innerHTML = result.sqft_estimate + '<span>sq ft estimated</span>';
+    document.getElementById('ai-range-display').textContent = `Range: ${result.sqft_min}–${result.sqft_max} sq ft · Confidence: ${result.confidence} · Complexity: ${result.complexity}`;
+
+    let notes = '';
+    if(result.item_description) notes += `<strong>Identified:</strong> ${result.item_description}<br><br>`;
+    if(result.prep_notes) notes += `<strong>Prep notes:</strong> ${result.prep_notes}<br>`;
+    if(result.coating_notes) notes += `<strong>Coating notes:</strong> ${result.coating_notes}`;
+    if(result.suggested_rate) notes += `<br><br><strong>Suggested rate:</strong> $${result.suggested_rate.toFixed(2)}/sq ft for this item type`;
+    document.getElementById('ai-notes-display').innerHTML = notes;
+
+    document.getElementById('ai-result').style.display = '';
+  } catch(err) {
+    document.getElementById('ai-result').style.display = '';
+    document.getElementById('ai-sqft-display').innerHTML = '—<span>Error</span>';
+    document.getElementById('ai-range-display').textContent = '';
+    document.getElementById('ai-notes-display').textContent = 'Could not analyze the photo. Please try again or enter square footage manually.';
+    document.getElementById('ai-apply-btn') && (document.getElementById('ai-apply-btn').style.display = 'none');
+  }
+
+  btn.disabled = false;
+  btnText.textContent = '🔄 Re-analyze Photo';
+}
+
+function applyAIEstimate() {
+  if(!aiEstimatedSqft) return;
+  const desc = document.getElementById('ai-desc').value || document.getElementById('ai-notes-display').textContent.split(':')[1]?.trim().split('<')[0] || CAT_NAMES[selectedCat];
+  const rate = aiEstimatedRate || parseFloat(document.getElementById('cat-rate').value) || 3.50;
+  document.getElementById('cat-rate').value = rate.toFixed(2);
+  addSAItem(desc.substring(0,40), aiEstimatedSqft, rate);
+  showToast('Added to quote: ' + aiEstimatedSqft + ' sq ft @ $'+rate.toFixed(2)+'/SF');
+  // scroll to items
+  document.getElementById('sa-items').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+// ══════════════════════════════════════════════
+// PRINT / COPY / RESET
+// ══════════════════════════════════════════════
+function getHRTotal() {
+  const lf=parseFloat(document.getElementById('h-lf').value)||0;
+  const rate=parseFloat(document.getElementById('hr'+hrStyle).value)||0;
+  const cond=parseFloat(document.getElementById('h-cond').value)||0;
+  const blast=parseFloat(document.getElementById('h-blast').value)||0;
+  const primer=parseFloat(document.getElementById('h-primer').value)||0;
+  const mpCost=getMPTotal('hr');
+  const cm=parseFloat(document.getElementById('h-colormatch').value)||0;
+  const finish=parseFloat(document.getElementById('h-finish').value)||1;
+  const colors=parseFloat(document.getElementById('h-colors').value)||1;
+  const rush=parseFloat(document.getElementById('h-rush').value)||1;
+  const extraTotal=hrExtras.reduce((s,e)=>s+(e.amount||0),0);
+  const sub=(lf*rate)+(lf*cond)+(lf*blast)+(lf*primer)+mpCost+cm+extraTotal;
+  return sub*finish*colors*rush;
+}
+
+function getSATotal() {
+  const finish=parseFloat(document.getElementById('s-finish').value)||1;
+  const colors=parseFloat(document.getElementById('s-colors').value)||1;
+  const rush=parseFloat(document.getElementById('s-rush').value)||1;
+  const cond=parseFloat(document.getElementById('s-cond').value)||0;
+  const blast=parseFloat(document.getElementById('s-blast').value)||0;
+  const primerPerSF=parseFloat(document.getElementById('s-primer').value)||0;
+  const mpCost=getMPTotal('s');
+  const cm=parseFloat(document.getElementById('s-colormatch').value)||0;
+  const minCharge=parseFloat(document.getElementById('cat-min').value)||0;
+  const extraTotal=saExtras.reduce((s,e)=>s+(e.amount||0),0);
+  const totalSF=saItems.reduce((s,i)=>s+i.qty*i.sqft,0);
+  const itemsBase=saItems.reduce((s,i)=>s+i.qty*i.sqft*i.rate,0);
+  const condCost=totalSF*cond, blastCost=totalSF*blast, primerCost=totalSF*primerPerSF;
+  const sub=itemsBase+condCost+blastCost+primerCost+mpCost+cm+extraTotal;
+  let total=sub*finish*colors*rush;
+  if(total<minCharge && minCharge>0 && total>0) total=minCharge;
+  return total;
+}
+
+function printHR() {
+  const customer=document.getElementById('h-customer').value||'Customer';
+  const project=document.getElementById('h-project').value||'Handrail Project';
+  const date=document.getElementById('h-date').value||new Date().toLocaleDateString();
+  const validity=document.getElementById('h-validity').value;
+  const lf=document.getElementById('h-lf').value;
+  const styleNames=['Grab Rail','Single Top Rail Handrail','Basic Picketed Handrail','Ornate Picketed Handrail'];
+  const rate=parseFloat(document.getElementById('hr'+hrStyle).value)||0;
+  const total=getHRTotal();
+  openPrintWindow(customer, project, date, validity, total, `
+    <tr><td><strong>${styleNames[hrStyle]}</strong><br><span style="color:#8A96A8;font-size:11px">Powder coat — ${document.getElementById('h-finish').options[document.getElementById('h-finish').selectedIndex].text}</span></td><td>${lf} LF</td><td>$${rate.toFixed(2)}/LF</td><td>$${(lf*rate).toFixed(2)}</td></tr>
+    ${hrExtras.filter(e=>e.amount>0).map(e=>`<tr><td>${e.label||'Additional'}</td><td>—</td><td>flat</td><td>$${e.amount.toFixed(2)}</td></tr>`).join('')}
+  `);
+}
+
+function printSA() {
+  const customer=document.getElementById('s-customer').value||'Customer';
+  const project=document.getElementById('s-project').value||'Powder Coating Project';
+  const date=document.getElementById('s-date').value||new Date().toLocaleDateString();
+  const validity=document.getElementById('s-validity').value;
+  const total=getSATotal();
+  const rows = saItems.map(i=>`<tr><td><strong>${i.desc||'Item'}</strong></td><td>${i.qty}</td><td>${i.sqft} SF each</td><td>$${i.rate.toFixed(2)}/SF</td><td>$${(i.qty*i.sqft*i.rate).toFixed(2)}</td></tr>`).join('')
+    + saExtras.filter(e=>e.amount>0).map(e=>`<tr><td>${e.label||'Additional'}</td><td>—</td><td>—</td><td>flat</td><td>$${e.amount.toFixed(2)}</td></tr>`).join('');
+  openPrintWindow(customer, project, date, validity, total, rows);
+}
+
+function openPrintWindow(customer, project, date, validity, total, rowsHTML) {
+  const win = window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Quote — ${customer}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Open Sans',sans-serif;color:#1A1A2A;background:#fff}
+  .top{background:#0D1B2A;color:#fff;padding:22px 36px;display:flex;justify-content:space-between;align-items:center}
+  .tlogo{font-family:'Montserrat',sans-serif;font-weight:900;font-size:22px;letter-spacing:2px}
+  .tsub{font-size:10px;color:#4A9FE0;font-weight:700;letter-spacing:2px;margin-top:2px}
+  .tright{text-align:right;font-size:11px;color:rgba(255,255,255,.6);line-height:1.8}
+  .body{padding:36px 40px}
+  .meta{display:flex;justify-content:space-between;margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid #F0F0F0}
+  .ml{font-size:10px;font-weight:700;letter-spacing:2px;color:#8A96A8;text-transform:uppercase;margin-bottom:3px}
+  .mv{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:700}
+  .ms{font-size:12px;color:#8A96A8;margin-top:1px}
+  .stitle{font-size:10px;font-weight:700;letter-spacing:2px;color:#8A96A8;text-transform:uppercase;margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid #F0F0F0}
+  table{width:100%;border-collapse:collapse}td,th{padding:10px 0;border-bottom:1px solid #F4F6F9;font-size:13px}
+  th{font-size:9px;font-weight:700;letter-spacing:1.5px;color:#8A96A8;text-transform:uppercase}
+  td:last-child,th:last-child{text-align:right}
+  .btotal{margin-top:24px;background:#0D1B2A;color:#fff;padding:22px 28px;display:flex;justify-content:space-between;align-items:center}
+  .btl{font-size:10px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,.5);text-transform:uppercase;margin-bottom:3px}
+  .bts{font-size:10px;color:rgba(255,255,255,.3)}
+  .bta{font-family:'Montserrat',sans-serif;font-size:52px;font-weight:900}
+  .bta sup{font-size:22px;vertical-align:top;margin-top:10px;display:inline-block;color:#4A9FE0}
+  .valid{background:#F4F6F9;padding:12px 18px;margin-top:18px;font-size:11px;color:#8A96A8;border-left:3px solid #2E7DC5}
+  .foot{margin-top:36px;padding-top:16px;border-top:1px solid #F0F0F0;font-size:10px;color:#B0B8C4;text-align:center;line-height:1.8}
+  @media print{body{-webkit-print-color-adjust:exact}}</style></head><body>
+  <div class="top"><div><div class="tlogo">NEXUS</div><div class="tsub">Powder Coating, Inc.</div></div>
+  <div class="tright">815 14th St SW, Suite A150 · Loveland, CO 80537<br>970-520-7288 · Info@NexusPowderCoating.com</div></div>
+  <div class="body">
+  <div class="meta"><div><div class="ml">Prepared For</div><div class="mv">${customer}</div><div class="ms">${project}</div></div>
+  <div style="text-align:right"><div class="ml">Quote Date</div><div class="mv">${date}</div><div class="ms">Valid for ${validity}</div></div></div>
+  <div class="stitle">Scope of Work</div>
+  <table><tr><th>Description</th><th>Qty</th><th>Measurement</th><th>Rate</th><th>Amount</th></tr>${rowsHTML}</table>
+  <div class="btotal"><div><div class="btl">Total Quote</div><div class="bts">${project}</div></div><div class="bta"><sup>$</sup>${Math.round(total).toLocaleString()}</div></div>
+  <div class="valid">This quote is valid for ${validity} from the date above. Final pricing may vary based on actual part condition upon receipt. Pricing excludes sales tax where applicable.</div>
+  <div class="foot">Nexus Powder Coating, Inc. · 815 14th Street Southwest, Suite A150, Loveland, CO 80537<br>970-520-7288 · Info@NexusPowderCoating.com · www.nexuspowdercoating.com</div>
+  </div><script>window.onload=()=>window.print();<\/script></body></html>`);
+  win.document.close();
+}
+
+function copyHR() {
+  const styleNames=['Grab Rail','Single Top Rail','Basic Picketed','Ornate Picketed'];
+  const total=getHRTotal();
+  const text=`NEXUS POWDER COATING — QUOTE\n================\nCustomer: ${document.getElementById('h-customer').value||'—'}\nProject: ${document.getElementById('h-project').value||'—'}\nDate: ${document.getElementById('h-date').value||new Date().toLocaleDateString()}\n\nStyle: ${styleNames[hrStyle]}\nLinear Footage: ${document.getElementById('h-lf').value} LF\n\nTOTAL: $${total.toFixed(2)}\n\nNexus Powder Coating, Inc.\n970-520-7288 | Info@NexusPowderCoating.com`;
+  navigator.clipboard.writeText(text).then(()=>showToast('Quote copied!'));
+}
+
+function copySA() {
+  const total=getSATotal();
+  const itemLines=saItems.map(i=>`  ${i.desc||'Item'} ×${i.qty} @ ${i.sqft}SF × $${i.rate.toFixed(2)}/SF = $${(i.qty*i.sqft*i.rate).toFixed(2)}`).join('\n');
+  const text=`NEXUS POWDER COATING — QUOTE\n================\nCustomer: ${document.getElementById('s-customer').value||'—'}\nProject: ${document.getElementById('s-project').value||'—'}\n\nItems:\n${itemLines}\n\nTOTAL: $${total.toFixed(2)}\n\nNexus Powder Coating, Inc.\n970-520-7288 | Info@NexusPowderCoating.com`;
+  navigator.clipboard.writeText(text).then(()=>showToast('Quote copied!'));
+}
+
+function resetHR() { location.reload(); }
+function resetSA() { saItems=[]; saExtras=[]; renderSAItems(); renderSAExtras(); calcSA(); showToast('Reset.'); }
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ════════════════════════════════════════════════════
+// ADMIN PRICING LOADER
+// Reads from localStorage (set by nexus-admin-pricing.html)
+// Falls back to built-in defaults if not set.
+// ════════════════════════════════════════════════════
+const PRICING_DEFAULTS = {
+  hr0:4.50, hr1:7.00, hr2:10.50, hr3:15.00,
+  'hr-cond0':0, 'hr-cond1':0.30, 'hr-cond2':0.60, 'hr-cond3':0.90, 'hr-cond4':0.50,
+  'hr-blast1':0.50, 'hr-blast2':0.75,
+  'hr-primer1':0.25, 'hr-primer2':0.40,
+  cat0:2.50, cat1:2.75, cat2:2.25, cat3:3.00, cat4:2.75, cat5:2.00, cat6:3.50,
+  'sa-cond0':0, 'sa-cond1':0.30, 'sa-cond2':0.60, 'sa-cond3':0.90, 'sa-cond4':0.50,
+  'sa-blast1':0.50, 'sa-blast2':0.75,
+  'sa-primer1':0.15, 'sa-primer2':0.25,
+  'a-blast1':25, 'a-blast2':50,
+  'a-primer1':15, 'a-primer2':30,
+  'a-cond0':1.00, 'a-cond1':1.15, 'a-cond2':1.30, 'a-cond3':1.50, 'a-cond4':1.25,
+  fin0:1.00, fin1:1.20, fin2:1.35, fin3:1.15,
+  cm1:50, cm2:100,
+  col0:1.00, col1:1.30, col2:1.50,
+  rush0:1.00, rush1:1.25, rush2:1.50,
+  'mask-rate':1.50, 'plug-rate':0.75,
+  auto_w1:75, auto_w2:95, auto_w3:125, auto_w4:60, auto_w5:35, auto_w6:65,
+  auto_m1:185, auto_m2:250, auto_m3:95, auto_m4:45, auto_m5:85, auto_m6:75, auto_m7:110, auto_m8:55,
+  auto_s1:55, auto_s2:195, auto_s3:65, auto_s4:220, auto_s5:70, auto_s6:55, auto_s7:75,
+  auto_c1:175, auto_c2:150, auto_c3:65, auto_c4:135, auto_c5:85, auto_c6:195,
+  auto_e1:145, auto_e2:95, auto_e3:110, auto_e4:120, auto_e5:55, auto_e6:45, auto_e7:75,
+  auto_x1:125, auto_x2:85, auto_x3:150, auto_x4:130, auto_x5:155, auto_x6:165, auto_x7:75, auto_x8:95, auto_x9:110,
+};
+
+function loadAdminPricing() {
+  const stored = localStorage.getItem('nexus_pricing_v1');
+  return stored ? { ...PRICING_DEFAULTS, ...JSON.parse(stored) } : { ...PRICING_DEFAULTS };
+}
+
+function applyAdminPricing() {
+  const P = loadAdminPricing();
+  const badge = document.getElementById('pricing-source-badge');
+  if(badge) {
+    const stored = localStorage.getItem('nexus_pricing_v1');
+    badge.textContent = stored ? '✓ Prices: admin configured' : 'Prices: defaults';
+    badge.style.color = stored ? 'var(--green)' : 'var(--gray)';
+  }
+
+  // ── Handrail LF rates (read-only display inputs) ──
+  ['hr0','hr1','hr2','hr3'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    if(el) el.value = P['hr'+i];
+  });
+
+  // ── HR condition dropdown option values ──
+  const hCond = document.getElementById('h-cond');
+  if(hCond) {
+    const vals = [P['hr-cond0'], P['hr-cond1'], P['hr-cond2'], P['hr-cond3'], P['hr-cond4']];
+    [...hCond.options].forEach((opt,i) => { if(vals[i]!==undefined) opt.value = vals[i]; });
+  }
+
+  // ── HR blast ──
+  const hBlast = document.getElementById('h-blast');
+  if(hBlast) {
+    hBlast.options[1].value = P['hr-blast1'];
+    hBlast.options[1].text = `Standard (+$${P['hr-blast1'].toFixed(2)}/LF)`;
+    hBlast.options[2].value = P['hr-blast2'];
+    hBlast.options[2].text = `Heavy (+$${P['hr-blast2'].toFixed(2)}/LF)`;
+  }
+
+  // ── HR primer ──
+  const hPrimer = document.getElementById('h-primer');
+  if(hPrimer) {
+    hPrimer.options[1].value = P['hr-primer1'];
+    hPrimer.options[1].text = `Zinc (+$${P['hr-primer1'].toFixed(2)}/LF)`;
+    hPrimer.options[2].value = P['hr-primer2'];
+    hPrimer.options[2].text = `Epoxy (+$${P['hr-primer2'].toFixed(2)}/LF)`;
+  }
+
+  // ── SA category rates & min charge ──
+  // Will be set by selCat(); patch CAT_RATES array
+  for(let i=0;i<7;i++) CAT_RATES[i] = P['cat'+i] ?? CAT_RATES[i];
+  // set visible rate/min to first cat
+  const catRateEl = document.getElementById('cat-rate');
+  if(catRateEl) catRateEl.value = CAT_RATES[0].toFixed(2);
+
+  // ── SA condition ──
+  const sCond = document.getElementById('s-cond');
+  if(sCond) {
+    const sv = [P['sa-cond0'], P['sa-cond1'], P['sa-cond2'], P['sa-cond3'], P['sa-cond4']];
+    const sl = ['New / bare metal',
+      `Light rust/scale (+$${P['sa-cond1'].toFixed(2)}/SF)`,
+      `Existing paint — strip (+$${P['sa-cond2'].toFixed(2)}/SF)`,
+      `Heavy rust (+$${P['sa-cond3'].toFixed(2)}/SF)`,
+      `Existing powder — strip (+$${P['sa-cond4'].toFixed(2)}/SF)`];
+    [...sCond.options].forEach((opt,i) => { if(sv[i]!==undefined){opt.value=sv[i]; opt.text=sl[i];} });
+  }
+
+  // ── SA blast ──
+  const sBlast = document.getElementById('s-blast');
+  if(sBlast) {
+    sBlast.options[1].value = P['sa-blast1'];
+    sBlast.options[1].text = `Standard (+$${P['sa-blast1'].toFixed(2)}/SF)`;
+    sBlast.options[2].value = P['sa-blast2'];
+    sBlast.options[2].text = `Heavy (+$${P['sa-blast2'].toFixed(2)}/SF)`;
+  }
+
+  // ── SA primer ──
+  const sPrimer = document.getElementById('s-primer');
+  if(sPrimer) {
+    sPrimer.options[1].value = P['sa-primer1'];
+    sPrimer.options[1].text = `Zinc (+$${P['sa-primer1'].toFixed(2)}/SF)`;
+    sPrimer.options[2].value = P['sa-primer2'];
+    sPrimer.options[2].text = `Epoxy (+$${P['sa-primer2'].toFixed(2)}/SF)`;
+  }
+
+  // ── Auto blast ──
+  const aBlast = document.getElementById('a-blast');
+  if(aBlast) {
+    aBlast.options[1].value = P['a-blast1'];
+    aBlast.options[1].text = `Standard blast (+$${P['a-blast1']} flat)`;
+    aBlast.options[2].value = P['a-blast2'];
+    aBlast.options[2].text = `Heavy blast (+$${P['a-blast2']} flat)`;
+  }
+
+  // ── Auto primer ──
+  const aPrimer = document.getElementById('a-primer');
+  if(aPrimer) {
+    aPrimer.options[1].value = P['a-primer1'];
+    aPrimer.options[1].text = `Zinc primer (+$${P['a-primer1']} flat)`;
+    aPrimer.options[2].value = P['a-primer2'];
+    aPrimer.options[2].text = `Epoxy primer (+$${P['a-primer2']} flat)`;
+  }
+
+  // ── Auto condition multiplier ──
+  const aCond = document.getElementById('a-cond');
+  if(aCond) {
+    const acv = [P['a-cond0'], P['a-cond1'], P['a-cond2'], P['a-cond3'], P['a-cond4']];
+    const acl = ['New / bare metal',
+      `Light rust / scale (+${Math.round((P['a-cond1']-1)*100)}%)`,
+      `Existing paint — strip (+${Math.round((P['a-cond2']-1)*100)}%)`,
+      `Heavy rust (+${Math.round((P['a-cond3']-1)*100)}%)`,
+      `Existing powder — strip (+${Math.round((P['a-cond4']-1)*100)}%)`];
+    [...aCond.options].forEach((opt,i) => { if(acv[i]!==undefined){opt.value=acv[i]; opt.text=acl[i];} });
+  }
+
+  // ── Finish type multipliers (HR, SA, Auto all share same labels) ──
+  const finIds = ['h-finish','s-finish','a-finish-type'];
+  finIds.forEach(fid => {
+    const el = document.getElementById(fid);
+    if(!el) return;
+    el.options[0].value = P.fin0;
+    el.options[1].value = P.fin1;
+    el.options[1].text = `Metallic / Pearl`;
+    el.options[2].value = P.fin2;
+    el.options[2].text = `Candy / Two-Stage`;
+    el.options[3].value = P.fin3;
+    el.options[3].text = `Texture (Wrinkle/Hammer)`;
+  });
+
+  // ── Color match ──
+  ['h-colormatch','s-colormatch','a-colormatch'].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.options[1].value = P.cm1;
+    el.options[1].text = `Custom Match (+$${P.cm1})`;
+    el.options[2].value = P.cm2;
+    el.options[2].text = `Exact Formula (+$${P.cm2})`;
+  });
+
+  // ── Multi-color multipliers ──
+  ['h-colors','s-colors','a-colors'].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.options[0].value = P.col0;
+    el.options[1].value = P.col1;
+    el.options[1].text = `2 colors (+${Math.round((P.col1-1)*100)}%)`;
+    el.options[2].value = P.col2;
+    el.options[2].text = `3+ colors (+${Math.round((P.col2-1)*100)}%)`;
+  });
+
+  // ── Rush multipliers ──
+  ['h-rush','s-rush','a-rush'].forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.options[0].value = P.rush0;
+    el.options[1].value = P.rush1;
+    el.options[1].text = `Rush 2–3 days (+${Math.round((P.rush1-1)*100)}%)`;
+    el.options[2].value = P.rush2;
+    el.options[2].text = `Same/Next-day (+${Math.round((P.rush2-1)*100)}%)`;
+  });
+
+  // ── Masking & Plugging default rates ──
+  mpData.hr.maskDefaultRate = P['mask-rate'];
+  mpData.hr.plugDefaultRate = P['plug-rate'];
+  mpData.a.maskDefaultRate  = P['mask-rate'];
+  mpData.a.plugDefaultRate  = P['plug-rate'];
+  mpData.s.maskDefaultRate  = P['mask-rate'];
+  mpData.s.plugDefaultRate  = P['plug-rate'];
+
+  // ── Auto catalog prices ──
+  AUTO_CATALOG.forEach(item => {
+    const key = 'auto_' + item.id;
+    if(P[key] !== undefined) item.price = P[key];
+  });
+}
+
+// Override addMPRow to use admin-loaded default rates
+const _origAddMPRow = addMPRow;
+// Already declared above; patch rates to use per-prefix defaults
+function getMPDefaultRate(prefix, type) {
+  return type === 'mask'
+    ? (mpData[prefix].maskDefaultRate ?? 1.50)
+    : (mpData[prefix].plugDefaultRate ?? 0.75);
+}
+
+// ── INIT ────────────────────────────────────
+document.getElementById('h-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+document.getElementById('s-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+document.getElementById('a-date').value = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+applyAdminPricing();
+
+addSAItem('', 0, CAT_RATES[0]);
+renderAutoTable();
+calcAuto();
+calcHR();
+calcSA();
+</script>
+</body>
+</html>
